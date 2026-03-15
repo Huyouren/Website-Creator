@@ -1,0 +1,56 @@
+<section class="movie-list-container">
+  <header class="hero">
+    <div class="hero-title-block">
+      <p class="hero-kicker">CinemaFlow Internal Archive</p>
+      <h1>电影资产管理中心</h1>
+      <p class="hint">点击任意卡片即可在下方查看详情并实时编辑标题。</p>
+    </div>
+    <div class="quick-stats">
+      <article>
+        <p>总片量</p>
+        <strong>{{ movies.length }}</strong>
+      </article>
+      <article>
+        <p>已选中</p>
+        <strong>{{ selectedMovie?.title || '未选择' }}</strong>
+      </article>
+    </div>
+  </header>
+
+  <app-movie-stats [movies]="movies"></app-movie-stats>
+
+  <div class="section-head">
+    <h2>电影列表</h2>
+    <p>卡片支持点击高亮，详情区支持双向编辑。</p>
+  </div>
+
+  <div class="movie-grid">
+    <mat-card
+      class="movie-card"
+      *ngFor="let movie of movies"
+      [class.active]="movie === selectedMovie"
+      (click)="onSelect(movie)"
+    >
+      <img mat-card-image [src]="movie.posterUrl" [alt]="movie.title + ' poster'" />
+      <mat-card-content>
+        <h2>{{ movie.title }}</h2>
+        <p class="director">导演：{{ movie.director }}</p>
+        <div class="movie-meta">
+          <span class="badge">{{ movie.rating | number: '1.1-1' }}</span>
+          <span class="watch-tag" [class.watched]="movie.isWatched">
+            {{ movie.isWatched ? '已观影' : '待观影' }}
+          </span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <section class="detail-wrap">
+    <app-movie-detail [movie]="selectedMovie"></app-movie-detail>
+  </section>
+
+  <section class="debug-panel">
+    <h3>selectedMovie 实时状态</h3>
+    <pre>{{ selectedMovie | json }}</pre>
+  </section>
+</section>

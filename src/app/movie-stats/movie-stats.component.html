@@ -1,0 +1,36 @@
+<section class="stats-panel" *ngIf="totalMovies > 0; else emptyState">
+  <mat-card class="stats-card">
+    <mat-card-header class="stats-header">
+      <mat-card-title>影库智能统计</mat-card-title>
+      <mat-card-subtitle>实时根据当前数据计算</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="stats-metrics">
+        <article class="metric">
+          <p class="metric-label">影库总片量</p>
+          <p class="metric-value">{{ totalMovies }}</p>
+        </article>
+        <article class="metric">
+          <p class="metric-label">平均评分</p>
+          <p class="metric-value">{{ averageRating | number: '1.1-1' }}</p>
+        </article>
+      </div>
+
+      <div class="progress-block">
+        <div class="progress-label">
+          <span>已观影比例</span>
+          <span>{{ watchedPercentage | number: '1.0-0' }}%</span>
+        </div>
+        <mat-progress-bar mode="determinate" [value]="watchedPercentage"></mat-progress-bar>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</section>
+
+<ng-template #emptyState>
+  <mat-card>
+    <mat-card-content>
+      <p>当前影库暂无数据。</p>
+    </mat-card-content>
+  </mat-card>
+</ng-template>

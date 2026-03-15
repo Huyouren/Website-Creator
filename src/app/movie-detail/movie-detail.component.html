@@ -1,0 +1,20 @@
+<section class="movie-detail" *ngIf="movie as currentMovie">
+  <mat-card class="detail-card">
+    <img mat-card-image [src]="currentMovie.posterUrl" [alt]="currentMovie.title + ' poster'" />
+    <mat-card-content>
+      <p class="detail-kicker">Selected Movie</p>
+      <h2>{{ currentMovie.title }}</h2>
+      <mat-form-field appearance="outline" class="title-editor">
+        <mat-label>修改电影标题</mat-label>
+        <input matInput [(ngModel)]="currentMovie.title" />
+      </mat-form-field>
+
+      <div class="detail-grid">
+        <p><span>导演</span>{{ currentMovie.director }}</p>
+        <p><span>上映日期</span>{{ currentMovie.releaseDate | date: 'yyyy年MM月' }}</p>
+        <p><span>评分等级</span>{{ currentMovie.rating }}/10（{{ currentMovie.rating | ratingLevel }}）</p>
+        <p><span>观影状态</span>{{ currentMovie.isWatched ? '已看' : '未看' }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</section>

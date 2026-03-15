@@ -1,0 +1,76 @@
+.stats-panel {
+  margin-bottom: 20px;
+}
+
+.stats-card {
+  border: 1px solid var(--cf-border);
+  border-radius: 16px;
+  background: var(--cf-surface);
+  position: relative;
+  overflow: hidden;
+}
+
+.stats-card::after {
+  content: '';
+  position: absolute;
+  top: -70px;
+  right: -40px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 183, 3, 0.22), transparent 62%);
+  pointer-events: none;
+}
+
+.stats-header {
+  margin-bottom: 10px;
+}
+
+.stats-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.metric {
+  margin: 0;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.metric-label {
+  margin: 0 0 4px;
+  color: var(--cf-text-sub);
+  font-size: 0.82rem;
+}
+
+.metric-value {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fef3c7;
+}
+
+.progress-block {
+  margin-top: 14px;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+mat-progress-bar {
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .stats-metrics {
+    grid-template-columns: 1fr;
+  }
+}

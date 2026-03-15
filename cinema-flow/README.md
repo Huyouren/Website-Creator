@@ -1,21 +1,4 @@
-# Website-Creator
-
-本仓库的第一次上机课项目已按目录归档在 `cinema-flow/` 下。
-
-## 进入项目
-
-```bash
-cd cinema-flow
-```
-
-## 运行项目
-
-```bash
-npm install
-npm start
-```
-
-浏览器访问：http://localhost:4200/# CinemaFlow - 第一次上机课
+# CinemaFlow - 第一次上机课
 
 CinemaFlow 是一个内部电影库管理系统原型项目，用于演示 Angular 17 Standalone 架构下的数据驱动 UI、组件通信与统计展示。
 

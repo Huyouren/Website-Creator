@@ -1,20 +1,137 @@
 <section class="movie-detail" *ngIf="movie as currentMovie">
   <mat-card class="detail-card">
-    <img mat-card-image [src]="currentMovie.posterUrl" [alt]="currentMovie.title + ' poster'" />
-    <mat-card-content>
-      <p class="detail-kicker">Selected Movie</p>
-      <h2>{{ currentMovie.title }}</h2>
-      <mat-form-field appearance="outline" class="title-editor">
-        <mat-label>修改电影标题</mat-label>
-        <input matInput [(ngModel)]="currentMovie.title" />
-      </mat-form-field>
+    <div class="detail-main">
+      <img class="poster" [src]="currentMovie.posterUrl" [alt]="currentMovie.title + ' poster'" />
+      
+      <div class="detail-content">
+        <div class="detail-header">
+          <div>
+            <h2>{{ currentMovie.title }}</h2>
+            <p class="subtitle">{{ currentMovie.releaseDate | date: 'yyyy' }}</p>
+          </div>
+          <button mat-raised-button color="primary" (click)="toggleEditMode()">
+            {{ isEditMode ? '取消编辑' : '编辑电影' }}
+          </button>
+        </div>
 
-      <div class="detail-grid">
-        <p><span>导演</span>{{ currentMovie.director }}</p>
-        <p><span>上映日期</span>{{ currentMovie.releaseDate | date: 'yyyy年MM月' }}</p>
-        <p><span>评分等级</span>{{ currentMovie.rating }}/10（{{ currentMovie.rating | ratingLevel }}）</p>
-        <p><span>观影状态</span>{{ currentMovie.isWatched ? '已看' : '未看' }}</p>
+        <!-- 豆瓣风格评分和状态 -->
+        <div class="douban-rating">
+          <div class="rating-box">
+            <div class="rating-num">{{ currentMovie.rating }}</div>
+            <div class="rating-stars">
+              <mat-icon *ngFor="let star of getStarArray(Math.round(currentMovie.rating / 2))" class="star">
+                star
+              </mat-icon>
+            </div>
+            <div class="rating-count">{{ currentMovie.viewCount || 0 }} 人看过</div>
+          </div>
+
+          <div class="watch-actions">
+            <button 
+              mat-stroked-button 
+              [color]="currentMovie.watchStatus === 'want' ? 'accent' : ''"
+              (click)="updateWatchStatus('want')">
+              <mat-icon>bookmark_border</mat-icon>
+              想看
+            </button>
+            <button 
+              mat-stroked-button 
+              [color]="currentMovie.watchStatus === 'watching' ? 'accent' : ''"
+              (click)="updateWatchStatus('watching')">
+              <mat-icon>play_circle_outline</mat-icon>
+              在看
+            </button>
+            <button 
+              mat-stroked-button 
+              [color]="currentMovie.watchStatus === 'watched' ? 'accent' : ''"
+              (click)="updateWatchStatus('watched')">
+              <mat-icon>check_circle_outline</mat-icon>
+              看过
+            </button>
+          </div>
+        </div>
+
+        <!-- 用户评分 -->
+        <div class="user-rating" *ngIf="!isEditMode">
+          <span>我的评分：</span>
+          <button 
+            *ngFor="let star of [1,2,3,4,5]" 
+            mat-icon-button 
+            (click)="rateMovie(star)"
+            [class.active]="star <= (currentMovie.userRating || 0)">
+            <mat-icon>{{ star <= (currentMovie.userRating || 0) ? 'star' : 'star_border' }}</mat-icon>
+          </button>
+          <span class="rating-text">{{ currentMovie.userRating || '未评分' }}</span>
+        </div>
+
+        <!-- 标签 -->
+        <div class="tags-section" *ngIf="currentMovie.tags && currentMovie.tags.length > 0">
+          <mat-chip-set>
+            <mat-chip *ngFor="let tag of currentMovie.tags">{{ tag }}</mat-chip>
+          </mat-chip-set>
+        </div>
+
+        <!-- 基本信息 -->
+        <div *ngIf="!isEditMode" class="movie-info">
+          <div class="info-row">
+            <span class="label">导演：</span>
+            <span>{{ currentMovie.director }}</span>
+          </div>
+          <div class="info-row" *ngIf="currentMovie.cast && currentMovie.cast.length > 0">
+            <span class="label">主演：</span>
+            <span>{{ currentMovie.cast.join(' / ') }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">上映日期：</span>
+            <span>{{ currentMovie.releaseDate | date: 'yyyy年MM月dd日' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">评分等级：</span>
+            <span>{{ currentMovie.rating }}/10（{{ currentMovie.rating | ratingLevel }}）</span>
+          </div>
+          <div class="info-row">
+            <span class="label">观影状态：</span>
+            <span>{{ getWatchStatusText(currentMovie.watchStatus) }}</span>
+          </div>
+        </div>
+
+        <!-- 简介 -->
+        <div class="summary" *ngIf="currentMovie.summary && !isEditMode">
+          <h3>剧情简介</h3>
+          <p>{{ currentMovie.summary }}</p>
+        </div>
+
+        <!-- 编辑表单 -->
+        <div *ngIf="isEditMode && editedMovie" class="edit-form">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>电影标题</mat-label>
+            <input matInput [(ngModel)]="editedMovie.title" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>导演</mat-label>
+            <input matInput [(ngModel)]="editedMovie.director" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>评分 (0-10)</mat-label>
+            <input matInput type="number" [(ngModel)]="editedMovie.rating" min="0" max="10" step="0.1" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>海报 URL</mat-label>
+            <input matInput [(ngModel)]="editedMovie.posterUrl" />
+          </mat-form-field>
+
+          <div class="edit-actions">
+            <button mat-raised-button color="primary" (click)="saveChanges()">保存</button>
+            <button mat-raised-button (click)="cancelEdit()">取消</button>
+          </div>
+        </div>
       </div>
-    </mat-card-content>
+    </div>
   </mat-card>
+
+  <!-- 评论区 -->
+  <app-movie-comments [movie]="currentMovie"></app-movie-comments>
 </section>

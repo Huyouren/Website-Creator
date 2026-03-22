@@ -1,0 +1,52 @@
+<div class="search-container">
+  <div class="search-bar">
+    <mat-form-field appearance="outline" class="search-input">
+      <mat-label>搜索电影、导演、演员</mat-label>
+      <input matInput [(ngModel)]="searchKeyword" (keyup.enter)="onSearch()" placeholder="输入关键词搜索...">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="onSearch()">搜索</button>
+  </div>
+
+  <div class="filters">
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>按标签筛选</mat-label>
+      <mat-select [(ngModel)]="selectedTag" (selectionChange)="onFilterByTag()">
+        <mat-option value="">全部</mat-option>
+        <mat-option *ngFor="let tag of allTags" [value]="tag">{{ tag }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>观看状态</mat-label>
+      <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onFilterByStatus()">
+        <mat-option value="">全部</mat-option>
+        <mat-option value="want">想看</mat-option>
+        <mat-option value="watching">在看</mat-option>
+        <mat-option value="watched">看过</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>排序方式</mat-label>
+      <mat-select [(ngModel)]="sortBy" (selectionChange)="onSort()">
+        <mat-option value="rating">评分</mat-option>
+        <mat-option value="date">上映时间</mat-option>
+        <mat-option value="views">热度</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>排序顺序</mat-label>
+      <mat-select [(ngModel)]="sortOrder" (selectionChange)="onSort()">
+        <mat-option value="desc">降序</mat-option>
+        <mat-option value="asc">升序</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-stroked-button (click)="clearFilters()">
+      <mat-icon>clear</mat-icon>
+      清除筛选
+    </button>
+  </div>
+</div>

@@ -1,14 +1,14 @@
 <section class="movie-list-container">
   <header class="hero">
     <div class="hero-title-block">
-      <p class="hero-kicker">CinemaFlow Internal Archive</p>
+      <p class="hero-kicker">CinemaFlow 豆瓣风格</p>
       <h1>电影资产管理中心</h1>
-      <p class="hint">点击任意卡片即可在下方查看详情并实时编辑标题。</p>
+      <p class="hint">发现好电影，记录观影足迹，分享你的影评</p>
     </div>
     <div class="quick-stats">
       <article>
         <p>总片量</p>
-        <strong>{{ movies.length }}</strong>
+        <strong>{{ (movies$ | async)?.length || 0 }}</strong>
       </article>
       <article>
         <p>已选中</p>
@@ -17,30 +17,53 @@
     </div>
   </header>
 
-  <app-movie-stats [movies]="movies"></app-movie-stats>
+  <app-movie-stats></app-movie-stats>
+
+  <!-- 搜索和筛选 -->
+  <app-movie-search (searchResults)="onSearchResults($event)"></app-movie-search>
+
+  <!-- 添加电影表单 -->
+  <app-movie-form></app-movie-form>
 
   <div class="section-head">
     <h2>电影列表</h2>
-    <p>卡片支持点击高亮，详情区支持双向编辑。</p>
+    <p>点击卡片查看详情，发表影评</p>
   </div>
 
   <div class="movie-grid">
     <mat-card
       class="movie-card"
-      *ngFor="let movie of movies"
+      *ngFor="let movie of getDisplayMovies(movies$ | async)"
       [class.active]="movie === selectedMovie"
       (click)="onSelect(movie)"
     >
-      <img mat-card-image [src]="movie.posterUrl" [alt]="movie.title + ' poster'" />
+      <div class="poster-wrapper">
+        <img mat-card-image [src]="movie.posterUrl" [alt]="movie.title + ' poster'" />
+        <div class="watch-status-badge" *ngIf="movie.watchStatus" [class]="getWatchStatusClass(movie.watchStatus)">
+          <mat-icon>{{ getWatchStatusIcon(movie.watchStatus) }}</mat-icon>
+        </div>
+      </div>
       <mat-card-content>
         <h2>{{ movie.title }}</h2>
         <p class="director">导演：{{ movie.director }}</p>
         <div class="movie-meta">
           <span class="badge">{{ movie.rating | number: '1.1-1' }}</span>
-          <span class="watch-tag" [class.watched]="movie.isWatched">
-            {{ movie.isWatched ? '已观影' : '待观影' }}
+          <span class="views">
+            <mat-icon>visibility</mat-icon>
+            {{ movie.viewCount || 0 }}
           </span>
         </div>
+        <div class="tags" *ngIf="movie.tags && movie.tags.length > 0">
+          <span class="tag" *ngFor="let tag of movie.tags.slice(0, 3)">{{ tag }}</span>
+        </div>
+        <button 
+          mat-icon-button 
+          color="warn" 
+          class="delete-btn"
+          (click)="onDelete(movie, $event)"
+          aria-label="删除电影">
+          <mat-icon>delete</mat-icon>
+        </button>
       </mat-card-content>
     </mat-card>
   </div>

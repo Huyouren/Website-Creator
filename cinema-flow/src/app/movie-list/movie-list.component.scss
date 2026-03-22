@@ -218,3 +218,19 @@ pre {
     height: 240px;
   }
 }
+
+.movie-card mat-card-content {
+  position: relative;
+}
+
+.delete-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.delete-btn:hover {
+  background: rgba(244, 67, 54, 0.8);
+}

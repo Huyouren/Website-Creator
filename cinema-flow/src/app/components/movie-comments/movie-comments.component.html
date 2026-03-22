@@ -1,0 +1,57 @@
+<div class="comments-section" *ngIf="movie">
+  <h3>影评 ({{ movie.comments?.length || 0 }})</h3>
+
+  <!-- 添加评论表单 -->
+  <mat-card class="add-comment-card">
+    <h4>写短评</h4>
+    <div class="rating-selector">
+      <span>评分：</span>
+      <button 
+        *ngFor="let star of [1,2,3,4,5]" 
+        mat-icon-button 
+        (click)="setRating(star)"
+        [class.active]="star <= newComment.rating">
+        <mat-icon>{{ star <= newComment.rating ? 'star' : 'star_border' }}</mat-icon>
+      </button>
+    </div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>写下你的评论...</mat-label>
+      <textarea 
+        matInput 
+        [(ngModel)]="newComment.content" 
+        rows="4"
+        placeholder="说说你的观影感受..."></textarea>
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="onSubmitComment()">
+      发表评论
+    </button>
+  </mat-card>
+
+  <!-- 评论列表 -->
+  <div class="comments-list">
+    <mat-card class="comment-card" *ngFor="let comment of movie.comments">
+      <div class="comment-header">
+        <div class="user-info">
+          <strong>{{ comment.userName }}</strong>
+          <div class="stars">
+            <mat-icon *ngFor="let star of getStarArray(comment.rating)" class="star-icon">
+              {{ star ? 'star' : 'star_border' }}
+            </mat-icon>
+          </div>
+        </div>
+        <span class="comment-date">{{ comment.createdAt | date: 'yyyy-MM-dd' }}</span>
+      </div>
+      <p class="comment-content">{{ comment.content }}</p>
+      <div class="comment-actions">
+        <button mat-button (click)="onLikeComment(comment.id)">
+          <mat-icon>thumb_up</mat-icon>
+          有用 {{ comment.likes }}
+        </button>
+      </div>
+    </mat-card>
+
+    <div *ngIf="!movie.comments || movie.comments.length === 0" class="no-comments">
+      <p>暂无评论，快来发表第一条评论吧！</p>
+    </div>
+  </div>
+</div>

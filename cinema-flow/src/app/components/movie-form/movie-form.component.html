@@ -1,0 +1,44 @@
+<mat-card class="movie-form-card">
+  <mat-card-header>
+    <h2>添加新电影</h2>
+  </mat-card-header>
+  <mat-card-content>
+    <form #movieForm="ngForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>电影名称</mat-label>
+        <input matInput [(ngModel)]="newMovie.title" name="title" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>导演</mat-label>
+        <input matInput [(ngModel)]="newMovie.director" name="director" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>上映日期</mat-label>
+        <input matInput type="date" [(ngModel)]="newMovie.releaseDate" name="releaseDate" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>评分 (0-10)</mat-label>
+        <input matInput type="number" [(ngModel)]="newMovie.rating" name="rating" min="0" max="10" step="0.1" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>海报 URL</mat-label>
+        <input matInput [(ngModel)]="newMovie.posterUrl" name="posterUrl" />
+      </mat-form-field>
+
+      <div class="checkbox-field">
+        <mat-checkbox [(ngModel)]="newMovie.isWatched" name="isWatched">
+          已观影
+        </mat-checkbox>
+      </div>
+
+      <div class="form-actions">
+        <button mat-raised-button color="primary" type="submit">添加电影</button>
+        <button mat-raised-button type="button" (click)="resetForm()">重置</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

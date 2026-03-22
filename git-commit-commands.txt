@@ -1,0 +1,51 @@
+# Git 提交命令
+
+# 1. 查看当前状态
+git status
+
+# 2. 添加所有更改
+git add .
+
+# 3. 提交更改
+git commit -m "第二次上机课作业
+
+完成内容：
+- Phase 1-5: 实现完整的 Service 层架构
+- 创建 MovieService 和 LoggerService
+- 组件依赖注入重构
+- 实现 CRUD 操作（增删改查）
+- RxJS Observable 响应式编程
+- BehaviorSubject 状态管理
+
+豆瓣风格功能扩展：
+- 评论系统：发表影评、点赞评论
+- 五星评分系统
+- 观看状态管理（想看/在看/看过）
+- 标签系统和筛选
+- 搜索功能（标题、导演、演员、标签）
+- 排序功能（评分、时间、热度）
+- 浏览次数统计
+- 详细信息展示（简介、主演等）
+
+新增组件：
+- MovieFormComponent - 添加电影表单
+- MovieSearchComponent - 搜索和筛选
+- MovieCommentsComponent - 评论系统
+
+技术亮点：
+- Standalone Components 架构
+- 依赖注入模式
+- RxJS Observable + BehaviorSubject
+- async 管道自动订阅
+- Material Design 组件库
+- TypeScript 类型安全
+- 清晰的服务分层架构"
+
+# 4. 推送到 GitHub
+git push origin main
+
+# 如果你的主分支是 master，使用：
+# git push origin master
+
+# 如果需要强制推送（谨慎使用）：
+# git push -f origin main

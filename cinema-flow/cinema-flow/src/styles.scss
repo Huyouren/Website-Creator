@@ -1,0 +1,75 @@
+@use '@angular/material' as mat;
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;600;700;800&display=swap');
+
+@include mat.core();
+
+$cinema-primary: mat.define-palette(mat.$blue-palette, 500, 300, 700);
+$cinema-accent: mat.define-palette(mat.$amber-palette, 400, 200, 600);
+$cinema-warn: mat.define-palette(mat.$red-palette);
+
+$cinema-theme: mat.define-dark-theme(
+  (
+    color: (
+      primary: $cinema-primary,
+      accent: $cinema-accent,
+      warn: $cinema-warn
+    ),
+    typography: mat.define-typography-config(
+      $font-family: 'Manrope, Noto Sans SC, Microsoft YaHei, sans-serif'
+    )
+  )
+);
+
+@include mat.all-component-themes($cinema-theme);
+
+:root {
+  --cf-bg-start: #020202;
+  --cf-bg-end: #0b0906;
+  --cf-surface: rgba(18, 16, 12, 0.84);
+  --cf-surface-strong: rgba(28, 24, 18, 0.92);
+  --cf-border: rgba(255, 212, 138, 0.16);
+  --cf-text-main: #f4e8d2;
+  --cf-text-sub: #b8a47f;
+  --cf-accent: #f2b84e;
+  --cf-accent-soft: #ffd78f;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	min-height: 100%;
+}
+
+body {
+  position: relative;
+  margin: 0;
+  color: var(--cf-text-main);
+  font-family: 'Manrope', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  background:
+    radial-gradient(circle at 50% -18%, rgba(255, 191, 94, 0.14), transparent 36%),
+    radial-gradient(circle at 8% 24%, rgba(173, 107, 37, 0.1), transparent 44%),
+    radial-gradient(circle at 94% 82%, rgba(198, 125, 49, 0.08), transparent 36%),
+    linear-gradient(180deg, var(--cf-bg-start), var(--cf-bg-end));
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0 160px,
+    rgba(255, 191, 94, 0.04) 160px 220px,
+    transparent 220px 390px
+  );
+  opacity: 0.65;
+}
+
+a {
+  color: inherit;
+}

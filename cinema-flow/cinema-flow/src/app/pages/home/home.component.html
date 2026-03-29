@@ -1,0 +1,83 @@
+<section class="home-shell">
+  <header class="hero-panel">
+    <div class="hero-content">
+      <p class="kicker">CINEMAFLOW CURATED</p>
+      <h1>年度电影风格榜</h1>
+      <p class="desc">
+        参考豆瓣电影专题页的黑金质感，重新组织为分区片单。你可以直接从海报墙浏览电影并进入详情页。
+      </p>
+
+      <div class="hero-metrics">
+        <article>
+          <span>电影总数</span>
+          <strong>{{ movies.length }}</strong>
+        </article>
+        <article>
+          <span>已观影</span>
+          <strong>{{ watchedCount }}</strong>
+        </article>
+        <article>
+          <span>平均评分</span>
+          <strong>{{ averageRating | number: '1.1-1' }}</strong>
+        </article>
+      </div>
+    </div>
+
+    <div class="hero-actions">
+      <a mat-raised-button color="primary" routerLink="/movies">
+        <mat-icon>theaters</mat-icon>
+        浏览列表
+      </a>
+      <a mat-stroked-button routerLink="/add">
+        <mat-icon>add_circle</mat-icon>
+        添加电影
+      </a>
+    </div>
+  </header>
+
+  <mat-card class="featured" *ngIf="featuredMovie as movie">
+    <img class="featured-bg" [src]="movie.posterUrl || fallbackPoster" [alt]="movie.title" />
+    <div class="featured-overlay"></div>
+    <div class="featured-content">
+      <p class="featured-kicker">年度推荐</p>
+      <h2>{{ movie.title }}</h2>
+      <p class="featured-meta">导演：{{ movie.director }} · {{ movie.releaseDate | date: 'yyyy-MM-dd' }}</p>
+      <div class="featured-rating">
+        <span class="score">{{ movie.rating | number: '1.1-1' }}</span>
+        <span class="level">{{ movie.rating | ratingLevel }}</span>
+      </div>
+      <a mat-flat-button color="primary" [routerLink]="['/movies', movie.id]">查看详情</a>
+    </div>
+  </mat-card>
+
+  <section class="section-block" *ngFor="let section of movieSections">
+    <header class="block-title" [ngClass]="'tone-' + section.tone">
+      <span class="subtitle">{{ section.subtitle }}</span>
+      <h3>{{ section.title }}</h3>
+    </header>
+
+    <div class="block-layout">
+      <a class="lead-card" [routerLink]="['/movies', lead.id]" *ngIf="section.movies[0] as lead">
+        <img [src]="lead.posterUrl || fallbackPoster" [alt]="lead.title" />
+        <div class="lead-meta">
+          <p class="title">{{ lead.title }}</p>
+          <span class="badge">{{ lead.rating | number: '1.1-1' }}</span>
+        </div>
+      </a>
+
+      <div class="mini-grid">
+        <a
+          class="mini-card"
+          [routerLink]="['/movies', movie.id]"
+          *ngFor="let movie of section.movies.slice(1); trackBy: trackByMovieId"
+        >
+          <img [src]="movie.posterUrl || fallbackPoster" [alt]="movie.title" />
+          <div class="mini-meta">
+            <p>{{ movie.title }}</p>
+            <span>{{ movie.rating | number: '1.1-1' }}</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+</section>

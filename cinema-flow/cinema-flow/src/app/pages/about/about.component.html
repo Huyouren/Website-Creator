@@ -1,0 +1,99 @@
+<section class="about-shell">
+  <header class="about-header">
+    <p class="kicker">About Project</p>
+    <h1>关于 CinemaFlow</h1>
+    <p class="lead">
+      CinemaFlow 是一个以 Angular Standalone + Router 为核心的 SPA 项目，目标是用现代化交互管理你的观影记录。
+    </p>
+    <div class="signal-strip">
+      <span>Router 架构</span>
+      <span>参数化路由</span>
+      <span>查询参数同步</span>
+      <span>Material UI</span>
+    </div>
+  </header>
+
+  <div class="content-grid">
+    <mat-card class="about-card intro-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>movie</mat-icon>
+        <mat-card-title>CinemaFlow 电影管理系统</mat-card-title>
+        <mat-card-subtitle>v3.0 - Router Edition</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p>
+          这个项目强调“结构清晰、状态可追踪、页面切换流畅”。所有核心能力都围绕路由系统展开，并通过统一视觉语言呈现。
+        </p>
+
+        <div class="mini-metrics">
+          <article>
+            <span>页面组织</span>
+            <strong>模块化</strong>
+          </article>
+          <article>
+            <span>路由方式</span>
+            <strong>懒加载</strong>
+          </article>
+          <article>
+            <span>交互体验</span>
+            <strong>SPA</strong>
+          </article>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="about-card stack-card">
+      <mat-card-content>
+        <h3>本次上机课实现点</h3>
+        <mat-list>
+          <mat-list-item>
+            <mat-icon matListItemIcon>check_circle</mat-icon>
+            <span matListItemTitle>应用级路由 + 懒加载页面</span>
+          </mat-list-item>
+          <mat-list-item>
+            <mat-icon matListItemIcon>check_circle</mat-icon>
+            <span matListItemTitle>电影详情参数路由 /movies/:id</span>
+          </mat-list-item>
+          <mat-list-item>
+            <mat-icon matListItemIcon>check_circle</mat-icon>
+            <span matListItemTitle>查询参数搜索（search）</span>
+          </mat-list-item>
+          <mat-list-item>
+            <mat-icon matListItemIcon>check_circle</mat-icon>
+            <span matListItemTitle>面包屑导航与导航高亮</span>
+          </mat-list-item>
+        </mat-list>
+
+        <h3>技术栈</h3>
+        <div class="tech-badges">
+          <span>Angular 17</span>
+          <span>Standalone Components</span>
+          <span>Angular Material</span>
+          <span>TypeScript</span>
+          <span>Router + Query Params</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-card class="about-card timeline-card">
+    <mat-card-content>
+      <h3>版本亮点</h3>
+      <div class="timeline">
+        <div class="point">
+          <span class="dot"></span>
+          <p><strong>主页面独立化</strong>：新增首页专门展示全部电影海报与评分。</p>
+        </div>
+        <div class="point">
+          <span class="dot"></span>
+          <p><strong>四页统一视觉</strong>：列表、添加、关于、仪表盘采用一致现代化设计语言。</p>
+        </div>
+        <div class="point">
+          <span class="dot"></span>
+          <p><strong>可持续扩展</strong>：保留原有功能逻辑，后续可继续叠加筛选、排序与个性化推荐。</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</section>

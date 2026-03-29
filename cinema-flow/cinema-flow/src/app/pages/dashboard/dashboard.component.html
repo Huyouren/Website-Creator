@@ -1,0 +1,58 @@
+<section class="dashboard-container">
+  <header class="hero-card">
+    <div class="hero-main">
+      <p class="kicker">CinemaFlow Dashboard</p>
+      <h1>欢迎回来，今天想看哪一部？</h1>
+      <p class="description">
+        这里展示你的观影数据概览。你可以从这里进入电影列表、添加新电影，或继续查看最近录入的电影详情。
+      </p>
+      <div class="hero-tags">
+        <span>实时统计</span>
+        <span>无刷新切换</span>
+        <span>路由驱动</span>
+      </div>
+    </div>
+
+    <div class="hero-actions">
+      <a mat-raised-button color="primary" routerLink="/movies">
+        <mat-icon>theaters</mat-icon>
+        查看电影列表
+      </a>
+      <a mat-stroked-button routerLink="/add">
+        <mat-icon>add_circle</mat-icon>
+        添加新电影
+      </a>
+      <p class="hero-tip">
+        <mat-icon>insights</mat-icon>
+        从这里可以快速进入你最常用的操作。
+      </p>
+    </div>
+  </header>
+
+  <app-movie-stats></app-movie-stats>
+
+  <section class="recent-section">
+    <div class="section-head">
+      <h2>最近添加</h2>
+      <p>快速继续浏览刚录入的电影</p>
+    </div>
+
+    <div class="recent-grid" *ngIf="recentMovies.length > 0; else emptyRecent">
+      <a class="recent-card" [routerLink]="['/movies', movie.id]" *ngFor="let movie of recentMovies; let i = index">
+        <span class="rank">0{{ i + 1 }}</span>
+        <div class="info">
+          <h3>{{ movie.title }}</h3>
+          <p>{{ movie.director }}</p>
+        </div>
+        <span class="rating">{{ movie.rating | number: '1.1-1' }}</span>
+      </a>
+    </div>
+
+    <ng-template #emptyRecent>
+      <div class="empty-tip">
+        <mat-icon>video_library</mat-icon>
+        <p>当前还没有电影数据，先去添加第一部电影吧。</p>
+      </div>
+    </ng-template>
+  </section>
+</section>

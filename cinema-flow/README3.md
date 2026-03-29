@@ -1,7 +1,5 @@
 ﻿# CinemaFlow - 电影管理系统
 
-> 当前仓库首页直接展示第三次作业说明；对应源文件为 [`cinema-flow/README3.md`](./cinema-flow/README3.md)。
-
 ## 项目简介
 
 CinemaFlow 是一个基于 Angular 19 开发的个人电影管理系统，用于记录和管理观影清单。本项目是《商务网站开发与管理》课程的第三次上机课作业。

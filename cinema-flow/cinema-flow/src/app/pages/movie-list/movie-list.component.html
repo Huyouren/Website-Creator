@@ -1,0 +1,115 @@
+<section class="page-shell">
+  <header class="page-header">
+    <div class="title-group">
+      <p class="kicker">Movie Library</p>
+      <h1>电影列表</h1>
+      <div class="summary-line">
+        <span><mat-icon>video_library</mat-icon>当前展示 {{ filteredMovies.length }} 部电影</span>
+      </div>
+    </div>
+    <a mat-raised-button color="primary" routerLink="/add">
+      <mat-icon>add</mat-icon>
+      添加电影
+    </a>
+  </header>
+
+  <section class="tool-panel">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>搜索电影</mat-label>
+      <input
+        matInput
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="onSearch()"
+        placeholder="输入电影名或导演"
+      />
+      <button mat-icon-button matSuffix (click)="onSearch()" aria-label="搜索">
+        <mat-icon>search</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <div class="tool-actions">
+      <button mat-flat-button color="primary" (click)="onSearch()">
+        <mat-icon>travel_explore</mat-icon>
+        应用搜索
+      </button>
+      <button mat-stroked-button (click)="clearSearch()">重置</button>
+    </div>
+  </section>
+
+  <div class="table-shell" *ngIf="filteredMovies.length > 0; else noResult">
+    <div class="table-caption">
+      <span>电影清单</span>
+      <p>点击电影名称或操作区图标进入详情页</p>
+    </div>
+
+    <div class="table-wrap">
+      <table mat-table [dataSource]="filteredMovies" class="movie-table">
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef>电影名称</th>
+          <td mat-cell *matCellDef="let movie">
+            <a [routerLink]="['/movies', movie.id]" class="movie-link">
+              {{ movie.title }}
+            </a>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="director">
+          <th mat-header-cell *matHeaderCellDef>导演</th>
+          <td mat-cell *matCellDef="let movie">{{ movie.director }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="rating">
+          <th mat-header-cell *matHeaderCellDef>评分</th>
+          <td mat-cell *matCellDef="let movie">
+            <span class="rating-badge" [class.high]="movie.rating >= 8">
+              {{ movie.rating | number: '1.1-1' }}
+            </span>
+            <span class="rating-level">{{ movie.rating | ratingLevel }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>状态</th>
+          <td mat-cell *matCellDef="let movie">
+            <mat-chip [class.watched]="movie.isWatched">
+              {{ movie.isWatched ? '已观影' : '未观影' }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>操作</th>
+          <td mat-cell *matCellDef="let movie">
+            <a
+              mat-icon-button
+              color="primary"
+              [routerLink]="['/movies', movie.id]"
+              title="查看详情"
+            >
+              <mat-icon>visibility</mat-icon>
+            </a>
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="deleteMovie(movie.id)"
+              title="删除电影"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+  </div>
+
+  <ng-template #noResult>
+    <div class="no-results">
+      <mat-icon>search_off</mat-icon>
+      <p>没有找到匹配的电影</p>
+      <button mat-stroked-button (click)="clearSearch()">清除搜索</button>
+    </div>
+  </ng-template>
+</section>

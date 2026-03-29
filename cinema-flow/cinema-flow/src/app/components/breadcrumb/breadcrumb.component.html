@@ -1,0 +1,11 @@
+<nav class="breadcrumb" *ngIf="breadcrumbs.length > 0">
+  <a routerLink="/home" class="home-link">
+    <mat-icon>home</mat-icon>
+  </a>
+
+  <span *ngFor="let item of breadcrumbs; let last = last" class="breadcrumb-item">
+    <mat-icon>chevron_right</mat-icon>
+    <a *ngIf="!last" [routerLink]="item.url">{{ item.label }}</a>
+    <span *ngIf="last" class="current">{{ item.label }}</span>
+  </span>
+</nav>

@@ -1,0 +1,51 @@
+<mat-toolbar class="app-toolbar">
+  <a class="brand" routerLink="/home">
+    <mat-icon>local_movies</mat-icon>
+    <span>CinemaFlow</span>
+  </a>
+
+  <span class="spacer"></span>
+
+  <nav class="nav-links">
+    <a
+      mat-button
+      routerLink="/home"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <mat-icon>home</mat-icon>
+      主页面
+    </a>
+
+    <a
+      mat-button
+      routerLink="/dashboard"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <mat-icon>dashboard</mat-icon>
+      仪表盘
+    </a>
+
+    <a mat-button routerLink="/movies" routerLinkActive="active-link">
+      <mat-icon>theaters</mat-icon>
+      电影列表
+    </a>
+
+    <a mat-button routerLink="/add" routerLinkActive="active-link">
+      <mat-icon>add_circle</mat-icon>
+      添加电影
+    </a>
+
+    <a mat-button routerLink="/about" routerLinkActive="active-link">
+      <mat-icon>info</mat-icon>
+      关于
+    </a>
+  </nav>
+</mat-toolbar>
+
+<app-breadcrumb></app-breadcrumb>
+
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>

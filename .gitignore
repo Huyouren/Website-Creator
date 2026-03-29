@@ -1,0 +1,15 @@
+# Root repository ignore rules
+
+# Top-level course project artifacts
+cinema-flow/.angular/
+cinema-flow/dist/
+cinema-flow/node_modules/
+
+# Angular app artifacts inside the nested project folder
+cinema-flow/cinema-flow/.angular/
+cinema-flow/cinema-flow/dist/
+cinema-flow/cinema-flow/node_modules/
+
+# Common temp files
+Thumbs.db
+.DS_Store

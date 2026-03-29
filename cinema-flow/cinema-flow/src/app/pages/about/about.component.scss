@@ -1,0 +1,155 @@
+.about-shell {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: grid;
+  gap: 14px;
+}
+
+.about-header {
+  padding: 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 214, 140, 0.2);
+  background:
+    radial-gradient(circle at 88% -26%, rgba(255, 199, 121, 0.2), transparent 52%),
+    linear-gradient(128deg, rgba(25, 20, 13, 0.9), rgba(10, 9, 7, 0.9));
+
+  h1 {
+    margin: 6px 0 8px;
+    font-size: clamp(1.8rem, 4vw, 2.7rem);
+    font-family: 'Bebas Neue', 'Noto Sans SC', sans-serif;
+    letter-spacing: 0.04em;
+  }
+}
+
+.kicker {
+  margin: 0;
+  color: #ffd6a0;
+  font-size: 0.76rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.lead {
+  margin: 0;
+  color: #ccb894;
+  line-height: 1.65;
+}
+
+.signal-strip {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  span {
+    height: 28px;
+    padding: 0 11px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 214, 140, 0.2);
+    display: inline-flex;
+    align-items: center;
+    color: #f0d9af;
+    background: rgba(255, 214, 140, 0.08);
+    font-size: 0.8rem;
+  }
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 12px;
+}
+
+.about-card {
+  border-radius: 18px;
+  border: 1px solid rgba(255, 214, 140, 0.16);
+  background: rgba(11, 10, 8, 0.86);
+}
+
+p {
+  margin: 0;
+  color: #d2be97;
+  line-height: 1.7;
+}
+
+h3 {
+  margin: 20px 0 8px;
+  font-size: 1.05rem;
+}
+
+.mini-metrics {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+
+  article {
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 214, 140, 0.16);
+    background: rgba(255, 214, 140, 0.06);
+  }
+
+  span {
+    font-size: 0.8rem;
+    color: #b79d72;
+  }
+
+  strong {
+    display: block;
+    margin-top: 2px;
+    color: #ffe0ad;
+  }
+}
+
+.tech-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  span {
+    padding: 7px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 214, 140, 0.18);
+    background: rgba(255, 214, 140, 0.08);
+    font-size: 0.84rem;
+    color: #e8d2ab;
+  }
+}
+
+.timeline {
+  display: grid;
+  gap: 12px;
+}
+
+.point {
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  gap: 10px;
+  align-items: start;
+
+  p {
+    margin: 0;
+    color: #d3bf97;
+    line-height: 1.6;
+  }
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  margin-top: 7px;
+  border-radius: 50%;
+  background: linear-gradient(120deg, #ffc36e, #ffe4b7);
+  box-shadow: 0 0 0 4px rgba(255, 204, 137, 0.2);
+}
+
+@media (max-width: 900px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mini-metrics {
+    grid-template-columns: 1fr;
+  }
+}

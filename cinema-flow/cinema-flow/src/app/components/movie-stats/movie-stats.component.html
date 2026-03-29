@@ -1,0 +1,30 @@
+<section class="stats-grid">
+  <mat-card class="stat-card glow">
+    <span class="mark">01</span>
+    <mat-icon>video_library</mat-icon>
+    <p class="label">总电影数</p>
+    <p class="value">{{ totalMovies }}</p>
+  </mat-card>
+
+  <mat-card class="stat-card">
+    <span class="mark">02</span>
+    <mat-icon>check_circle</mat-icon>
+    <p class="label">已观影</p>
+    <p class="value">{{ watchedMovies }}</p>
+  </mat-card>
+
+  <mat-card class="stat-card">
+    <span class="mark">03</span>
+    <mat-icon>schedule</mat-icon>
+    <p class="label">待观看</p>
+    <p class="value">{{ unwatchedMovies }}</p>
+  </mat-card>
+
+  <mat-card class="stat-card">
+    <span class="mark">04</span>
+    <mat-icon>star</mat-icon>
+    <p class="label">平均评分</p>
+    <p class="value">{{ averageRating | number: '1.1-1' }}</p>
+    <p class="sub">完成率 {{ watchedPercent | number: '1.0-0' }}%</p>
+  </mat-card>
+</section>

@@ -1,0 +1,75 @@
+<section class="page-shell">
+  <header class="page-header">
+    <p class="kicker">Create New Entry</p>
+    <h1>添加新电影</h1>
+    <p class="lead">录入基本信息、评分与海报地址，快速把影片加入你的观影库。</p>
+    <div class="header-flags">
+      <span>信息录入</span>
+      <span>评分系统</span>
+      <span>即时入库</span>
+    </div>
+  </header>
+
+  <mat-card class="form-card">
+    <mat-card-content>
+      <form #movieForm="ngForm" (ngSubmit)="onSubmit()" class="movie-form">
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>电影名称</mat-label>
+            <input matInput [(ngModel)]="newMovie.title" name="title" required />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>导演</mat-label>
+            <input matInput [(ngModel)]="newMovie.director" name="director" required />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>上映日期</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker"
+              [(ngModel)]="newMovie.releaseDate"
+              name="releaseDate"
+              required
+            />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>海报 URL</mat-label>
+            <input matInput [(ngModel)]="newMovie.posterUrl" name="posterUrl" />
+          </mat-form-field>
+        </div>
+
+        <div class="slider-field">
+          <label for="rating-input">评分：{{ newMovie.rating | number: '1.1-1' }}</label>
+          <mat-slider min="0" max="10" step="0.1" showTickMarks>
+            <input
+              id="rating-input"
+              matSliderThumb
+              [(ngModel)]="newMovie.rating"
+              name="rating"
+            />
+          </mat-slider>
+        </div>
+
+        <div class="toggle-row">
+          <mat-slide-toggle [(ngModel)]="newMovie.isWatched" name="isWatched">
+            已观影
+          </mat-slide-toggle>
+          <span class="toggle-hint">开启后默认将该电影标记为“已看过”</span>
+        </div>
+
+        <div class="form-actions">
+          <button mat-button type="button" routerLink="/movies">取消</button>
+          <button mat-button type="button" (click)="resetForm()">重置</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="!movieForm.form.valid">
+            保存
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</section>

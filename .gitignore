@@ -1,11 +1,15 @@
 # Root repository ignore rules
 
 # Top-level course project artifacts
+.angular/
+dist/
+node_modules/
+node_modules/node_modules
+
+# Angular app artifacts inside course folders
 cinema-flow/.angular/
 cinema-flow/dist/
 cinema-flow/node_modules/
-
-# Angular app artifacts inside the nested project folder
 cinema-flow/cinema-flow/.angular/
 cinema-flow/cinema-flow/dist/
 cinema-flow/cinema-flow/node_modules/

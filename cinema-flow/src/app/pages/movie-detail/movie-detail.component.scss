@@ -125,3 +125,31 @@
     margin: 0 auto;
   }
 }
+
+.loading-shell {
+  min-height: 320px;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 12px;
+  color: #d3c0a0;
+}
+
+.status-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 214, 140, 0.16);
+  background: rgba(16, 29, 48, 0.84);
+
+  p {
+    margin: 0;
+  }
+}
+
+.status-note.error {
+  border-color: rgba(255, 138, 138, 0.28);
+}

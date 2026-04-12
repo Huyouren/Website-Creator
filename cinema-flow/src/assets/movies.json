@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "title": "The Shawshank Redemption",
+    "releaseDate": "1994-09-23T00:00:00.000Z",
+    "director": "Frank Darabont",
+    "rating": 9.7,
+    "isWatched": true,
+    "posterUrl": "https://image.tmdb.org/t/p/w500/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg",
+    "comments": []
+  },
+  {
+    "id": 2,
+    "title": "Spirited Away",
+    "releaseDate": "2001-07-20T00:00:00.000Z",
+    "director": "Hayao Miyazaki",
+    "rating": 9.2,
+    "isWatched": true,
+    "posterUrl": "https://image.tmdb.org/t/p/w500/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg",
+    "comments": []
+  },
+  {
+    "id": 3,
+    "title": "Interstellar",
+    "releaseDate": "2014-11-07T00:00:00.000Z",
+    "director": "Christopher Nolan",
+    "rating": 9.0,
+    "isWatched": false,
+    "posterUrl": "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+    "comments": []
+  },
+  {
+    "id": 4,
+    "title": "Parasite",
+    "releaseDate": "2019-05-30T00:00:00.000Z",
+    "director": "Bong Joon-ho",
+    "rating": 8.8,
+    "isWatched": true,
+    "posterUrl": "https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",
+    "comments": []
+  },
+  {
+    "id": 5,
+    "title": "Mad Max: Fury Road",
+    "releaseDate": "2015-05-15T00:00:00.000Z",
+    "director": "George Miller",
+    "rating": 8.5,
+    "isWatched": false,
+    "posterUrl": "https://image.tmdb.org/t/p/w500/hA2ple9q4qnwxp3hKVNhroipsir.jpg",
+    "comments": []
+  },
+  {
+    "id": 6,
+    "title": "La La Land",
+    "releaseDate": "2016-12-09T00:00:00.000Z",
+    "director": "Damien Chazelle",
+    "rating": 8.1,
+    "isWatched": true,
+    "posterUrl": "https://image.tmdb.org/t/p/w500/uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg",
+    "comments": []
+  }
+]

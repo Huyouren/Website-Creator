@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { MovieStatsComponent } from '../../components/movie-stats/movie-stats.component';
 import { Movie } from '../../models/movie';
-import { MovieService } from '../../services/movie.service';
+import { MovieStateService } from '../../services/movie-state.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,9 +23,14 @@ import { MovieService } from '../../services/movie.service';
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent {
-  private readonly movieService = inject(MovieService);
+  private readonly movieStateService = inject(MovieStateService);
 
-  get recentMovies(): Movie[] {
-    return this.movieService.getMovies().slice(-3).reverse();
+  readonly loading$ = this.movieStateService.loading$;
+  readonly error$ = this.movieStateService.error$;
+  readonly recentMovies$ = this.movieStateService.recentMovies$;
+  readonly recentlyVisitedMovies$ = this.movieStateService.recentlyVisitedMovies$;
+
+  protected trackByMovieId(_: number, movie: Movie): number {
+    return movie.id;
   }
 }

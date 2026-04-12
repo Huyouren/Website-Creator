@@ -2,11 +2,13 @@
   <header class="page-header">
     <p class="kicker">Create New Entry</p>
     <h1>添加新电影</h1>
-    <p class="lead">录入基本信息、评分与海报地址，快速把影片加入你的观影库。</p>
+    <p class="lead">
+      提交表单后会调用状态中心的新增方法，完成后列表页、首页和仪表盘都会立即看到最新结果。
+    </p>
     <div class="header-flags">
-      <span>信息录入</span>
-      <span>评分系统</span>
-      <span>即时入库</span>
+      <span>服务调用闭环</span>
+      <span>响应式状态同步</span>
+      <span>最终跳转详情页</span>
     </div>
   </header>
 
@@ -59,14 +61,25 @@
           <mat-slide-toggle [(ngModel)]="newMovie.isWatched" name="isWatched">
             已观影
           </mat-slide-toggle>
-          <span class="toggle-hint">开启后默认将该电影标记为“已看过”</span>
+          <span class="toggle-hint">打开后会在列表中标记为“已观影”。</span>
+        </div>
+
+        <div class="form-error" *ngIf="errorMsg">
+          <mat-icon>error_outline</mat-icon>
+          <p>{{ errorMsg }}</p>
         </div>
 
         <div class="form-actions">
           <button mat-button type="button" routerLink="/movies">取消</button>
           <button mat-button type="button" (click)="resetForm()">重置</button>
-          <button mat-raised-button color="primary" type="submit" [disabled]="!movieForm.form.valid">
-            保存
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="saving || !movieForm.form.valid"
+          >
+            <mat-icon>{{ saving ? 'hourglass_top' : 'save' }}</mat-icon>
+            {{ saving ? '保存中...' : '保存' }}
           </button>
         </div>
       </form>

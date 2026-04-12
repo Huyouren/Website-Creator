@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
 interface BreadcrumbItem {
@@ -22,8 +22,8 @@ export class BreadcrumbComponent {
   protected breadcrumbs: BreadcrumbItem[] = [];
 
   private readonly routeLabels: Record<string, string> = {
-    home: '主页面',
-    dashboard: '首页',
+    home: '首页',
+    dashboard: '仪表盘',
     movies: '电影列表',
     add: '添加电影',
     about: '关于'

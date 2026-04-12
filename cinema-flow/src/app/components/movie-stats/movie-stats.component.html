@@ -1,30 +1,35 @@
-<section class="stats-grid">
+<section class="stats-grid" *ngIf="viewModel$ | async as vm">
   <mat-card class="stat-card glow">
     <span class="mark">01</span>
     <mat-icon>video_library</mat-icon>
-    <p class="label">总电影数</p>
-    <p class="value">{{ totalMovies }}</p>
+    <p class="label">电影总数</p>
+    <p class="value">{{ vm.loading ? '--' : vm.totalMovies }}</p>
   </mat-card>
 
   <mat-card class="stat-card">
     <span class="mark">02</span>
     <mat-icon>check_circle</mat-icon>
     <p class="label">已观影</p>
-    <p class="value">{{ watchedMovies }}</p>
+    <p class="value">{{ vm.loading ? '--' : vm.watchedMovies }}</p>
   </mat-card>
 
   <mat-card class="stat-card">
     <span class="mark">03</span>
     <mat-icon>schedule</mat-icon>
-    <p class="label">待观看</p>
-    <p class="value">{{ unwatchedMovies }}</p>
+    <p class="label">待观影</p>
+    <p class="value">{{ vm.loading ? '--' : vm.unwatchedMovies }}</p>
   </mat-card>
 
   <mat-card class="stat-card">
     <span class="mark">04</span>
     <mat-icon>star</mat-icon>
     <p class="label">平均评分</p>
-    <p class="value">{{ averageRating | number: '1.1-1' }}</p>
-    <p class="sub">完成率 {{ watchedPercent | number: '1.0-0' }}%</p>
+    <p class="value">{{ vm.loading ? '--' : (vm.averageRating | number: '1.1-1') }}</p>
+    <p class="sub" *ngIf="!vm.loading; else loadingCopy">
+      完成率 {{ vm.watchedPercent | number: '1.0-0' }}%
+    </p>
+    <ng-template #loadingCopy>
+      <p class="sub">正在同步状态中心</p>
+    </ng-template>
   </mat-card>
 </section>

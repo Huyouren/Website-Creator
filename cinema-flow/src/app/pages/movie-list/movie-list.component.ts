@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -9,9 +8,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Movie } from '../../models/movie';
+import { combineLatest, finalize, map, tap } from 'rxjs';
 import { RatingLevelPipe } from '../../pipes/rating-level.pipe';
-import { MovieService } from '../../services/movie.service';
+import { MovieStateService } from '../../services/movie-state.service';
 
 @Component({
   selector: 'app-movie-list-page',
@@ -31,14 +30,11 @@ import { MovieService } from '../../services/movie.service';
   templateUrl: './movie-list.component.html',
   styleUrl: './movie-list.component.scss'
 })
-export class MovieListPageComponent implements OnInit {
-  private readonly movieService = inject(MovieService);
+export class MovieListPageComponent {
+  private readonly movieStateService = inject(MovieStateService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly destroyRef = inject(DestroyRef);
 
-  protected movies: Movie[] = [];
-  protected filteredMovies: Movie[] = [];
   protected searchTerm = '';
   protected readonly displayedColumns = [
     'title',
@@ -48,19 +44,45 @@ export class MovieListPageComponent implements OnInit {
     'actions'
   ];
 
-  ngOnInit(): void {
-    this.movies = this.movieService.getMovies();
+  private readonly deletingIds = new Set<number>();
 
+  readonly filteredMovies$ = combineLatest([
+    this.movieStateService.movies$,
     this.route.queryParamMap
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((params) => {
-        this.searchTerm = params.get('search')?.trim() ?? '';
-        this.applyFilter();
-      });
-  }
+  ]).pipe(
+    tap(([_, params]) => {
+      this.searchTerm = params.get('search')?.trim() ?? '';
+    }),
+    map(([movies, params]) => {
+      const term = params.get('search')?.trim().toLowerCase() ?? '';
 
-  protected onSearch(): void {
-    const keyword = this.searchTerm.trim();
+      if (!term) {
+        return movies;
+      }
+
+      return movies.filter(
+        (movie) =>
+          movie.title.toLowerCase().includes(term) ||
+          movie.director.toLowerCase().includes(term)
+      );
+    })
+  );
+
+  readonly viewModel$ = combineLatest([
+    this.filteredMovies$,
+    this.movieStateService.loading$,
+    this.movieStateService.error$
+  ]).pipe(
+    map(([filteredMovies, loading, error]) => ({
+      filteredMovies,
+      loading,
+      error
+    }))
+  );
+
+  protected onSearchChange(value: string): void {
+    const keyword = value.trim();
+
     void this.router.navigate(['/movies'], {
       queryParams: keyword ? { search: keyword } : {}
     });
@@ -76,22 +98,22 @@ export class MovieListPageComponent implements OnInit {
       return;
     }
 
-    this.movieService.deleteMovie(id);
-    this.movies = this.movieService.getMovies();
-    this.applyFilter();
+    this.deletingIds.add(id);
+    this.movieStateService
+      .deleteMovie(id)
+      .pipe(
+        finalize(() => {
+          this.deletingIds.delete(id);
+        })
+      )
+      .subscribe({
+        error: () => {
+          // 具体错误信息已写入服务消息面板和状态中心。
+        }
+      });
   }
 
-  private applyFilter(): void {
-    if (!this.searchTerm) {
-      this.filteredMovies = this.movies;
-      return;
-    }
-
-    const term = this.searchTerm.toLowerCase();
-    this.filteredMovies = this.movies.filter(
-      (movie) =>
-        movie.title.toLowerCase().includes(term) ||
-        movie.director.toLowerCase().includes(term)
-    );
+  protected isDeleting(id: number): boolean {
+    return this.deletingIds.has(id);
   }
 }

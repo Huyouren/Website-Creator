@@ -1,68 +1,85 @@
-<section class="detail-page">
+<section class="detail-page" *ngIf="viewModel$ | async as vm">
   <button mat-button (click)="goBack()" class="back-btn">
     <mat-icon>arrow_back</mat-icon>
     返回
   </button>
 
-  <div *ngIf="movie; else notFound">
-    <mat-card class="movie-detail-card">
-      <div class="content-grid">
-        <img [src]="movie.posterUrl || fallbackPoster" [alt]="movie.title" class="movie-poster" />
+  <div class="loading-shell" *ngIf="vm.loading; else detailContent">
+    <mat-progress-spinner mode="indeterminate" diameter="52"></mat-progress-spinner>
+    <p>正在加载电影详情...</p>
+  </div>
 
-        <div class="movie-info">
-          <h1>{{ movie.title }}</h1>
-          <p class="meta">
-            <mat-icon>person</mat-icon>
-            导演：{{ movie.director }}
-          </p>
-          <p class="meta">
-            <mat-icon>calendar_today</mat-icon>
-            上映日期：{{ movie.releaseDate | date: 'yyyy年MM月dd日' }}
-          </p>
-
-          <div class="rating-box">
-            <span class="score">{{ movie.rating | number: '1.1-1' }}</span>
-            <span class="label">{{ movie.rating | ratingLevel }}</span>
-            <span class="watch-status" [class.done]="movie.isWatched">
-              {{ movie.isWatched ? '已观影' : '未观影' }}
-            </span>
-          </div>
-        </div>
+  <ng-template #detailContent>
+    <div *ngIf="vm.movie as movie; else notFound">
+      <div class="status-note error" *ngIf="vm.error">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ vm.error }}</p>
       </div>
 
-      <mat-divider></mat-divider>
+      <div class="status-note error" *ngIf="actionError">
+        <mat-icon>warning_amber</mat-icon>
+        <p>{{ actionError }}</p>
+      </div>
 
-      <mat-card-actions align="end">
-        <a mat-raised-button color="primary" routerLink="/movies">
-          <mat-icon>list</mat-icon>
-          返回列表
-        </a>
-        <button mat-raised-button color="warn" (click)="deleteMovie()">
-          <mat-icon>delete</mat-icon>
-          删除
+      <mat-card class="movie-detail-card">
+        <div class="content-grid">
+          <img [src]="movie.posterUrl || fallbackPoster" [alt]="movie.title" class="movie-poster" />
+
+          <div class="movie-info">
+            <h1>{{ movie.title }}</h1>
+            <p class="meta">
+              <mat-icon>person</mat-icon>
+              导演：{{ movie.director }}
+            </p>
+            <p class="meta">
+              <mat-icon>calendar_today</mat-icon>
+              上映日期：{{ movie.releaseDate | date: 'yyyy年MM月dd日' }}
+            </p>
+
+            <div class="rating-box">
+              <span class="score">{{ movie.rating | number: '1.1-1' }}</span>
+              <span class="label">{{ movie.rating | ratingLevel }}</span>
+              <span class="watch-status" [class.done]="movie.isWatched">
+                {{ movie.isWatched ? '已观影' : '待观影' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <mat-card-actions align="end">
+          <a mat-raised-button color="primary" routerLink="/movies">
+            <mat-icon>list</mat-icon>
+            返回列表
+          </a>
+          <button mat-raised-button color="warn" [disabled]="deleting" (click)="deleteMovie(movie.id, movie.title)">
+            <mat-icon>{{ deleting ? 'hourglass_top' : 'delete' }}</mat-icon>
+            {{ deleting ? '删除中...' : '删除电影' }}
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <div class="navigation-buttons">
+        <button mat-stroked-button *ngIf="vm.prevMovieId" [routerLink]="['/movies', vm.prevMovieId]">
+          <mat-icon>chevron_left</mat-icon>
+          上一部
         </button>
-      </mat-card-actions>
-    </mat-card>
-
-    <div class="navigation-buttons">
-      <button mat-stroked-button *ngIf="prevMovieId" [routerLink]="['/movies', prevMovieId]">
-        <mat-icon>chevron_left</mat-icon>
-        上一部
-      </button>
-      <span class="spacer"></span>
-      <button mat-stroked-button *ngIf="nextMovieId" [routerLink]="['/movies', nextMovieId]">
-        下一部
-        <mat-icon>chevron_right</mat-icon>
-      </button>
+        <span class="spacer"></span>
+        <button mat-stroked-button *ngIf="vm.nextMovieId" [routerLink]="['/movies', vm.nextMovieId]">
+          下一部
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
     </div>
-  </div>
+  </ng-template>
 
   <ng-template #notFound>
     <mat-card class="not-found">
       <mat-card-content>
         <mat-icon color="warn">error_outline</mat-icon>
         <h2>电影未找到</h2>
-        <p>该电影可能已被删除或 ID 不正确。</p>
+        <p>{{ vm.error || '该电影可能已被删除，或者当前地址中的 ID 无效。' }}</p>
         <a mat-raised-button color="primary" routerLink="/movies">返回电影列表</a>
       </mat-card-content>
     </mat-card>

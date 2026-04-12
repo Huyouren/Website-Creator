@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { movieDetailGuard } from './guards/movie-detail.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -6,7 +7,7 @@ export const routes: Routes = [
     path: 'home',
     loadComponent: () =>
       import('./pages/home/home.component').then((m) => m.HomeComponent),
-    title: 'CinemaFlow - 电影主页面'
+    title: 'CinemaFlow - 首页'
   },
   {
     path: 'dashboard',
@@ -26,6 +27,7 @@ export const routes: Routes = [
   },
   {
     path: 'movies/:id',
+    canActivate: [movieDetailGuard],
     loadComponent: () =>
       import('./pages/movie-detail/movie-detail.component').then(
         (m) => m.MovieDetailPageComponent

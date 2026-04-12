@@ -1,0 +1,86 @@
+
+> cinema-flow@0.0.0 start
+> ng serve --host 0.0.0.0 --port 4200
+
+Initial chunk files | Names                  |  Raw size
+styles.css          | styles                 | 189.76 kB | 
+polyfills.js        | polyfills              |  88.09 kB | 
+main.js             | main                   |  19.75 kB | 
+chunk-RR66P7K6.js   | -                      |  14.01 kB | 
+
+                    | Initial total          | 311.60 kB
+
+Lazy chunk files    | Names                  |  Raw size
+chunk-AO3QFWOA.js   | dashboard-component    |  27.97 kB | 
+chunk-LGYB3YLR.js   | home-component         |  26.21 kB | 
+chunk-VGEHK4B2.js   | movie-list-component   |  25.74 kB | 
+chunk-MYTKPEVP.js   | movie-detail-component |  18.42 kB | 
+chunk-25CXBCZK.js   | movie-add-component    |  16.72 kB | 
+chunk-NPTRS372.js   | about-component        |  16.03 kB | 
+chunk-OYXRLRX5.js   | -                      | 759 bytes | 
+
+Application bundle generation complete. [32.600 seconds]
+
+Watch mode enabled. Watching for file changes...
+Re-optimizing dependencies because vite config has changed
+  ➜  Local:   http://localhost:4200/
+  ➜  Network: http://10.111.222.1:4200/
+  ➜  Network: http://172.18.119.166:4200/
+  ➜  Network: http://172.24.112.1:4200/
+Initial chunk files | Names                  | Raw size
+main.js             | main                   | 19.75 kB | 
+chunk-6II4I6CX.js   | -                      | 14.24 kB | 
+
+Lazy chunk files    | Names                  | Raw size
+chunk-JMTPIIXN.js   | dashboard-component    | 27.97 kB | 
+chunk-WGC6RA2O.js   | home-component         | 26.21 kB | 
+chunk-47U6G3MI.js   | movie-list-component   | 25.74 kB | 
+chunk-J5S6KV76.js   | movie-detail-component | 18.42 kB | 
+chunk-7Q7PJYLZ.js   | movie-add-component    | 16.72 kB | 
+chunk-TVZ7I2SG.js   | about-component        | 16.03 kB | 
+
+Application bundle generation complete. [3.530 seconds]
+
+Page reload sent to client(s).
+19:47:02 [vite] ✨ new dependencies optimized: @angular/common/http
+19:47:02 [vite] ✨ optimized dependencies changed. reloading
+Initial chunk files | Names | Raw size
+main.js             | main  | 19.83 kB | 
+
+Application bundle generation complete. [1.029 seconds]
+
+Page reload sent to client(s).
+Initial chunk files | Names                  | Raw size
+main.js             | main                   | 20.47 kB | 
+chunk-3JMSTJUM.js   | -                      | 14.25 kB | 
+
+Lazy chunk files    | Names                  | Raw size
+chunk-BMLZKLIU.js   | dashboard-component    | 27.97 kB | 
+chunk-DPO7YBTS.js   | home-component         | 26.21 kB | 
+chunk-ZWFD2QSK.js   | movie-list-component   | 25.74 kB | 
+chunk-DQ53TZG3.js   | movie-detail-component | 18.42 kB | 
+chunk-TL3JA2BF.js   | movie-add-component    | 16.72 kB | 
+chunk-UAJQF5FU.js   | about-component        | 16.03 kB | 
+
+Application bundle generation complete. [1.100 seconds]
+
+Page reload sent to client(s).
+Initial chunk files | Names                  | Raw size
+main.js             | main                   | 20.47 kB | 
+
+Lazy chunk files    | Names                  | Raw size
+chunk-X3JYJUVW.js   | movie-detail-component | 20.81 kB | 
+
+Application bundle generation complete. [5.882 seconds]
+
+Page reload sent to client(s).
+
+No output file changes.
+
+Application bundle generation complete. [0.917 seconds]
+
+
+No output file changes.
+
+Application bundle generation complete. [0.616 seconds]
+

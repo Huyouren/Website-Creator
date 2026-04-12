@@ -215,3 +215,30 @@ mat-chip.watched {
     align-items: flex-start;
   }
 }
+
+.state-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 214, 140, 0.16);
+  background: rgba(12, 10, 8, 0.82);
+
+  p {
+    margin: 0;
+    color: #d6c29b;
+  }
+
+  mat-icon {
+    color: #ffca7f;
+  }
+}
+
+.state-banner.error {
+  border-color: rgba(255, 138, 138, 0.28);
+}
+
+.state-banner.loading {
+  border-color: rgba(126, 198, 255, 0.24);
+}

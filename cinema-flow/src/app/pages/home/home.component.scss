@@ -377,3 +377,42 @@ h1 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.status-card {
+  border-radius: 18px;
+  border: 1px solid rgba(255, 214, 140, 0.18);
+  background: rgba(11, 10, 8, 0.88);
+}
+
+.status-card.error {
+  border-color: rgba(255, 138, 138, 0.28);
+}
+
+.status-body {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+
+  mat-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 32px;
+    color: #ffca7f;
+  }
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 1.05rem;
+  }
+
+  p {
+    margin-top: 4px;
+    color: #c9b58f;
+    line-height: 1.6;
+  }
+}

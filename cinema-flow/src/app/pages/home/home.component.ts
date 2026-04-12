@@ -4,9 +4,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
+import { combineLatest, map } from 'rxjs';
 import { Movie } from '../../models/movie';
 import { RatingLevelPipe } from '../../pipes/rating-level.pipe';
-import { MovieService } from '../../services/movie.service';
+import { MovieStateService } from '../../services/movie-state.service';
 
 interface MovieSection {
   id: string;
@@ -31,36 +32,43 @@ interface MovieSection {
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
-  private readonly movieService = inject(MovieService);
+  private readonly movieStateService = inject(MovieStateService);
 
   protected readonly fallbackPoster =
     'https://placehold.co/500x760/10213d/e8f2ff?text=CinemaFlow';
 
-  get movies(): Movie[] {
-    return this.movieService.getMovies();
+  readonly viewModel$ = combineLatest([
+    this.movieStateService.movies$,
+    this.movieStateService.loading$,
+    this.movieStateService.error$
+  ]).pipe(
+    map(([movies, loading, error]) => {
+      const featuredMovie = [...movies].sort((a, b) => b.rating - a.rating)[0];
+      const watchedCount = movies.filter((movie) => movie.isWatched).length;
+      const averageRating = movies.length
+        ? movies.reduce((sum, movie) => sum + movie.rating, 0) / movies.length
+        : 0;
+
+      return {
+        movies,
+        loading,
+        error,
+        featuredMovie,
+        watchedCount,
+        averageRating,
+        sections: this.buildMovieSections(movies)
+      };
+    })
+  );
+
+  protected trackByMovieId(_: number, movie: Movie): number {
+    return movie.id;
   }
 
-  get featuredMovie(): Movie | undefined {
-    return [...this.movies].sort((a, b) => b.rating - a.rating)[0];
-  }
-
-  get watchedCount(): number {
-    return this.movies.filter((movie) => movie.isWatched).length;
-  }
-
-  get averageRating(): number {
-    if (!this.movies.length) {
-      return 0;
-    }
-
-    const total = this.movies.reduce((sum, movie) => sum + movie.rating, 0);
-    return total / this.movies.length;
-  }
-
-  get movieSections(): MovieSection[] {
+  private buildMovieSections(movies: Movie[]): MovieSection[] {
     const groups = new Map<number, Movie[]>();
 
-    for (const movie of this.movies) {
+    for (const movie of movies) {
       const releaseYear = movie.releaseDate.getFullYear();
       const decade = Math.floor(releaseYear / 10) * 10;
       const bucket = groups.get(decade) ?? [];
@@ -72,16 +80,12 @@ export class HomeComponent {
 
     return [...groups.entries()]
       .sort((a, b) => a[0] - b[0])
-      .map(([decade, movies], index) => ({
+      .map(([decade, groupedMovies], index) => ({
         id: `decade-${decade}`,
         title: `${decade}年代片单`,
         subtitle: `${decade} - ${decade + 9}`,
         tone: tones[index % tones.length] ?? 'gold',
-        movies: [...movies].sort((a, b) => b.rating - a.rating)
+        movies: [...groupedMovies].sort((a, b) => b.rating - a.rating)
       }));
-  }
-
-  protected trackByMovieId(_: number, movie: Movie): number {
-    return movie.id;
   }
 }

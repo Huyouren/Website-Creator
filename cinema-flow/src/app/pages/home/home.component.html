@@ -1,24 +1,25 @@
-<section class="home-shell">
+<section class="home-shell" *ngIf="viewModel$ | async as vm">
   <header class="hero-panel">
     <div class="hero-content">
       <p class="kicker">CINEMAFLOW CURATED</p>
-      <h1>年度电影风格榜</h1>
+      <h1>响应式电影首页</h1>
       <p class="desc">
-        参考豆瓣电影专题页的黑金质感，重新组织为分区片单。你可以直接从海报墙浏览电影并进入详情页。
+        现在首页直接订阅状态中心提供的电影流，新增、删除和筛选后的结果会即时反映在整个应用中，
+        不再依赖组件内部维护的同步数组。
       </p>
 
       <div class="hero-metrics">
         <article>
           <span>电影总数</span>
-          <strong>{{ movies.length }}</strong>
+          <strong>{{ vm.loading ? '--' : vm.movies.length }}</strong>
         </article>
         <article>
           <span>已观影</span>
-          <strong>{{ watchedCount }}</strong>
+          <strong>{{ vm.loading ? '--' : vm.watchedCount }}</strong>
         </article>
         <article>
           <span>平均评分</span>
-          <strong>{{ averageRating | number: '1.1-1' }}</strong>
+          <strong>{{ vm.loading ? '--' : (vm.averageRating | number: '1.1-1') }}</strong>
         </article>
       </div>
     </div>
@@ -35,49 +36,89 @@
     </div>
   </header>
 
-  <mat-card class="featured" *ngIf="featuredMovie as movie">
-    <img class="featured-bg" [src]="movie.posterUrl || fallbackPoster" [alt]="movie.title" />
-    <div class="featured-overlay"></div>
-    <div class="featured-content">
-      <p class="featured-kicker">年度推荐</p>
-      <h2>{{ movie.title }}</h2>
-      <p class="featured-meta">导演：{{ movie.director }} · {{ movie.releaseDate | date: 'yyyy-MM-dd' }}</p>
-      <div class="featured-rating">
-        <span class="score">{{ movie.rating | number: '1.1-1' }}</span>
-        <span class="level">{{ movie.rating | ratingLevel }}</span>
+  <mat-card class="status-card" *ngIf="vm.loading">
+    <div class="status-body">
+      <mat-icon>hourglass_top</mat-icon>
+      <div>
+        <h2>正在同步电影数据</h2>
+        <p>应用启动后会先从根级服务加载数据，再由状态中心统一分发到各页面。</p>
       </div>
-      <a mat-flat-button color="primary" [routerLink]="['/movies', movie.id]">查看详情</a>
     </div>
   </mat-card>
 
-  <section class="section-block" *ngFor="let section of movieSections">
-    <header class="block-title" [ngClass]="'tone-' + section.tone">
-      <span class="subtitle">{{ section.subtitle }}</span>
-      <h3>{{ section.title }}</h3>
-    </header>
-
-    <div class="block-layout">
-      <a class="lead-card" [routerLink]="['/movies', lead.id]" *ngIf="section.movies[0] as lead">
-        <img [src]="lead.posterUrl || fallbackPoster" [alt]="lead.title" />
-        <div class="lead-meta">
-          <p class="title">{{ lead.title }}</p>
-          <span class="badge">{{ lead.rating | number: '1.1-1' }}</span>
-        </div>
-      </a>
-
-      <div class="mini-grid">
-        <a
-          class="mini-card"
-          [routerLink]="['/movies', movie.id]"
-          *ngFor="let movie of section.movies.slice(1); trackBy: trackByMovieId"
-        >
-          <img [src]="movie.posterUrl || fallbackPoster" [alt]="movie.title" />
-          <div class="mini-meta">
-            <p>{{ movie.title }}</p>
-            <span>{{ movie.rating | number: '1.1-1' }}</span>
-          </div>
-        </a>
+  <mat-card class="status-card error" *ngIf="!vm.loading && vm.error as error">
+    <div class="status-body">
+      <mat-icon>error_outline</mat-icon>
+      <div>
+        <h2>数据加载遇到问题</h2>
+        <p>{{ error }}</p>
       </div>
     </div>
-  </section>
+  </mat-card>
+
+  <ng-container *ngIf="!vm.loading">
+    <mat-card class="featured" *ngIf="vm.featuredMovie as movie">
+      <img class="featured-bg" [src]="movie.posterUrl || fallbackPoster" [alt]="movie.title" />
+      <div class="featured-overlay"></div>
+      <div class="featured-content">
+        <p class="featured-kicker">本周推荐</p>
+        <h2>{{ movie.title }}</h2>
+        <p class="featured-meta">
+          导演：{{ movie.director }} · {{ movie.releaseDate | date: 'yyyy-MM-dd' }}
+        </p>
+        <div class="featured-rating">
+          <span class="score">{{ movie.rating | number: '1.1-1' }}</span>
+          <span class="level">{{ movie.rating | ratingLevel }}</span>
+        </div>
+        <a mat-flat-button color="primary" [routerLink]="['/movies', movie.id]">
+          查看详情
+        </a>
+      </div>
+    </mat-card>
+
+    <ng-container *ngIf="vm.sections.length; else emptyState">
+      <section class="section-block" *ngFor="let section of vm.sections">
+        <header class="block-title" [ngClass]="'tone-' + section.tone">
+          <span class="subtitle">{{ section.subtitle }}</span>
+          <h3>{{ section.title }}</h3>
+        </header>
+
+        <div class="block-layout">
+          <a class="lead-card" [routerLink]="['/movies', lead.id]" *ngIf="section.movies[0] as lead">
+            <img [src]="lead.posterUrl || fallbackPoster" [alt]="lead.title" />
+            <div class="lead-meta">
+              <p class="title">{{ lead.title }}</p>
+              <span class="badge">{{ lead.rating | number: '1.1-1' }}</span>
+            </div>
+          </a>
+
+          <div class="mini-grid">
+            <a
+              class="mini-card"
+              [routerLink]="['/movies', movie.id]"
+              *ngFor="let movie of section.movies.slice(1); trackBy: trackByMovieId"
+            >
+              <img [src]="movie.posterUrl || fallbackPoster" [alt]="movie.title" />
+              <div class="mini-meta">
+                <p>{{ movie.title }}</p>
+                <span>{{ movie.rating | number: '1.1-1' }}</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <mat-card class="status-card">
+      <div class="status-body">
+        <mat-icon>video_library</mat-icon>
+        <div>
+          <h2>还没有电影数据</h2>
+          <p>可以先去添加第一部电影，状态中心会把新数据自动同步到所有页面。</p>
+        </div>
+      </div>
+    </mat-card>
+  </ng-template>
 </section>

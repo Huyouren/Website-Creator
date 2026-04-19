@@ -1,14 +1,9 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
 import { movieDetailGuard } from './guards/movie-detail.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
-  {
-    path: 'home',
-    loadComponent: () =>
-      import('./pages/home/home.component').then((m) => m.HomeComponent),
-    title: 'CinemaFlow - 首页'
-  },
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   {
     path: 'dashboard',
     loadComponent: () =>
@@ -26,6 +21,14 @@ export const routes: Routes = [
     title: 'CinemaFlow - 电影列表'
   },
   {
+    path: 'movies/genre/:genre',
+    loadComponent: () =>
+      import('./pages/movie-list/movie-list.component').then(
+        (m) => m.MovieListPageComponent
+      ),
+    title: 'CinemaFlow - 分类浏览'
+  },
+  {
     path: 'movies/:id',
     canActivate: [movieDetailGuard],
     loadComponent: () =>
@@ -35,7 +38,24 @@ export const routes: Routes = [
     title: 'CinemaFlow - 电影详情'
   },
   {
+    path: 'directors',
+    loadComponent: () =>
+      import('./pages/director-list/director-list.component').then(
+        (m) => m.DirectorListPageComponent
+      ),
+    title: 'CinemaFlow - 导演库'
+  },
+  {
+    path: 'directors/:id',
+    loadComponent: () =>
+      import('./pages/director-detail/director-detail.component').then(
+        (m) => m.DirectorDetailPageComponent
+      ),
+    title: 'CinemaFlow - 导演详情'
+  },
+  {
     path: 'add',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/movie-add/movie-add.component').then(
         (m) => m.MovieAddPageComponent
@@ -48,5 +68,12 @@ export const routes: Routes = [
       import('./pages/about/about.component').then((m) => m.AboutPageComponent),
     title: 'CinemaFlow - 关于'
   },
-  { path: '**', redirectTo: '/home' }
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./pages/not-found/not-found.component').then(
+        (m) => m.NotFoundPageComponent
+      ),
+    title: 'CinemaFlow - 404'
+  }
 ];

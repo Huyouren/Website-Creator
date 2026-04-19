@@ -39,6 +39,10 @@
 }
 
 .summary-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+
   span {
     display: inline-flex;
     align-items: center;
@@ -52,6 +56,27 @@
     height: 18px;
     font-size: 18px;
     color: #ffcd89;
+  }
+}
+
+.genre-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 214, 140, 0.16);
+  background: rgba(12, 10, 8, 0.82);
+
+  a {
+    border-radius: 999px;
+    border: 1px solid transparent;
+    color: #e8d5b2;
+  }
+
+  a.active {
+    border-color: rgba(255, 214, 142, 0.34);
+    background: rgba(255, 191, 91, 0.14);
   }
 }
 
@@ -76,6 +101,17 @@
   justify-content: flex-end;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.sort-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  button.active {
+    border-color: rgba(255, 214, 142, 0.34);
+    background: rgba(255, 191, 91, 0.14);
+  }
 }
 
 .table-shell {
@@ -113,7 +149,7 @@
 
 .movie-table {
   width: 100%;
-  min-width: 760px;
+  min-width: 860px;
   background: transparent;
 }
 
@@ -131,8 +167,26 @@
   font-weight: 600;
 }
 
-.movie-link:hover {
+.movie-link:hover,
+.director-link:hover {
   color: #ffcf8e;
+}
+
+.director-link {
+  color: #d6e7ff;
+  text-decoration: none;
+}
+
+.genre-chip {
+  height: 30px;
+  padding: 0 11px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  color: #ffd390;
+  text-decoration: none;
+  border: 1px solid rgba(255, 214, 140, 0.2);
+  background: rgba(255, 214, 140, 0.08);
 }
 
 .rating-badge {
@@ -208,6 +262,10 @@ mat-chip.watched {
 
   .tool-actions {
     justify-content: flex-start;
+  }
+
+  .genre-strip {
+    padding-inline: 10px;
   }
 
   .table-caption {

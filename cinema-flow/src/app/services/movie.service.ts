@@ -28,6 +28,8 @@ interface MovieAsset {
   title: string;
   releaseDate: string;
   director: string;
+  directorId: number;
+  genre: string;
   rating: number;
   isWatched: boolean;
   posterUrl: string;
@@ -252,6 +254,8 @@ export class MovieService {
       ...movie,
       title: movie.title.trim(),
       director: movie.director.trim(),
+      directorId: Number(movie.directorId) || 0,
+      genre: movie.genre.trim() || '未分类',
       posterUrl: movie.posterUrl.trim(),
       releaseDate: new Date(movie.releaseDate),
       comments: this.cloneComments(movie.comments)

@@ -13,7 +13,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { catchError, combineLatest, finalize, map, of, switchMap, tap } from 'rxjs';
+import { catchError, combineLatest, finalize, map, of, tap } from 'rxjs';
 import { Movie } from '../../models/movie';
 import { RatingLevelPipe } from '../../pipes/rating-level.pipe';
 import { MovieStateService } from '../../services/movie-state.service';
@@ -66,22 +66,28 @@ export class MovieDetailPageComponent {
   protected editError = '';
   protected editDraft?: Movie;
 
-  readonly viewModel$ = this.route.paramMap.pipe(
-    map((params) => Number(params.get('id'))),
-    map((id) => (Number.isNaN(id) ? null : id)),
-    switchMap((id) =>
-      combineLatest([
-        of(id),
-        this.movieStateService.movies$,
-        this.movieStateService.loading$,
-        this.movieStateService.error$,
-        id === null ? of(undefined) : this.movieStateService.getMovieById(id)
-      ])
-    ),
-    map(([id, movies, loading, error, movie]): DetailViewModel => {
-      const currentIndex = movie
-        ? movies.findIndex((item) => item.id === movie.id)
-        : -1;
+  readonly viewModel$ = combineLatest([
+    this.route.paramMap,
+    this.movieStateService.movies$,
+    this.movieStateService.loading$,
+    this.movieStateService.error$
+  ]).pipe(
+    map(([params, movies, loading, error]): DetailViewModel => {
+      const id = Number(params.get('id'));
+
+      if (Number.isNaN(id)) {
+        return {
+          id: null,
+          movie: undefined,
+          prevMovieId: undefined,
+          nextMovieId: undefined,
+          loading: false,
+          error: '当前电影编号无效。'
+        };
+      }
+
+      const currentIndex = movies.findIndex((item) => item.id === id);
+      const movie = currentIndex >= 0 ? this.cloneMovie(movies[currentIndex]) : undefined;
 
       return {
         id,

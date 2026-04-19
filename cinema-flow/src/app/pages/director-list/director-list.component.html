@@ -1,0 +1,38 @@
+<section class="page-shell">
+  <header class="page-header">
+    <div class="title-group">
+      <p class="kicker">Director Library</p>
+      <h1>导演库</h1>
+      <p class="lead">
+        这一页独立展示导演实体，并通过参数化路由进入导演详情，和电影模块形成双向跳转。
+      </p>
+    </div>
+
+    <a mat-raised-button color="primary" routerLink="/movies">
+      <mat-icon>theaters</mat-icon>
+      返回电影列表
+    </a>
+  </header>
+
+  <section class="director-grid" *ngIf="directors$ | async as directors">
+    <a
+      class="director-card"
+      [routerLink]="['/directors', director.id]"
+      *ngFor="let director of directors; trackBy: trackByDirectorId"
+    >
+      <div class="card-top">
+        <span class="badge">#{{ director.id }}</span>
+        <span class="birth">{{ director.birthYear }}</span>
+      </div>
+
+      <h2>{{ director.name }}</h2>
+      <p class="nationality">{{ director.nationality }}</p>
+      <p class="bio">{{ director.bio }}</p>
+
+      <span class="card-link">
+        查看详情
+        <mat-icon>arrow_forward</mat-icon>
+      </span>
+    </a>
+  </section>
+</section>

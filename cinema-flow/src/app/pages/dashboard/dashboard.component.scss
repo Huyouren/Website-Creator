@@ -221,6 +221,59 @@ h1 {
   }
 }
 
+.director-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.director-tile {
+  display: grid;
+  gap: 12px;
+  min-height: 146px;
+  padding: 14px;
+  border-radius: 14px;
+  text-decoration: none;
+  border: 1px solid rgba(255, 214, 140, 0.14);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 214, 140, 0.08),
+    rgba(255, 214, 140, 0.03)
+  );
+  transition: transform 180ms ease, border-color 180ms ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 214, 140, 0.42);
+  }
+
+  h3 {
+    margin: 0;
+    color: #f4dfba;
+    font-size: 1.05rem;
+  }
+
+  p {
+    margin: 6px 0 0;
+    color: #b69d72;
+  }
+}
+
+.tile-meta {
+  margin-top: auto;
+  display: grid;
+  gap: 6px;
+
+  span {
+    color: #ffd390;
+    font-size: 0.84rem;
+  }
+
+  strong {
+    color: #f0d8ae;
+  }
+}
+
 @media (max-width: 860px) {
   .hero-card {
     grid-template-columns: 1fr;
@@ -235,6 +288,10 @@ h1 {
   .recent-grid {
     grid-template-columns: 1fr;
   }
+
+  .director-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 560px) {
@@ -245,6 +302,10 @@ h1 {
   .section-head {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .director-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -270,6 +331,10 @@ h1 {
 
 .status-card.error {
   border-color: rgba(255, 138, 138, 0.28);
+}
+
+.status-card.warning {
+  border-color: rgba(255, 214, 140, 0.3);
 }
 
 .status-body {

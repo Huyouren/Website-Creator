@@ -10,9 +10,12 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatSelectModule } from '@angular/material/select';
 import { Router, RouterLink } from '@angular/router';
-import { finalize } from 'rxjs';
+import { finalize, take } from 'rxjs';
+import { Director } from '../../models/director';
 import { MovieDraft } from '../../models/movie';
+import { DirectorService } from '../../services/director.service';
 import { MovieStateService } from '../../services/movie-state.service';
 
 @Component({
@@ -30,18 +33,32 @@ import { MovieStateService } from '../../services/movie-state.service';
     MatNativeDateModule,
     MatSliderModule,
     MatSlideToggleModule,
-    MatIconModule
+    MatIconModule,
+    MatSelectModule
   ],
   templateUrl: './movie-add.component.html',
   styleUrl: './movie-add.component.scss'
 })
 export class MovieAddPageComponent {
+  private readonly directorService = inject(DirectorService);
   private readonly movieStateService = inject(MovieStateService);
   private readonly router = inject(Router);
 
+  protected readonly genres = ['剧情', '动画', '科幻', '动作', '武侠'];
+  protected directors: Director[] = [];
   protected newMovie: MovieDraft = this.createInitialMovie();
   protected saving = false;
   protected errorMsg = '';
+
+  constructor() {
+    this.directorService
+      .getDirectors()
+      .pipe(take(1))
+      .subscribe((directors) => {
+        this.directors = directors;
+        this.onDirectorChange(this.newMovie.directorId);
+      });
+  }
 
   protected onSubmit(): void {
     if (this.saving) {
@@ -80,12 +97,28 @@ export class MovieAddPageComponent {
   protected resetForm(): void {
     this.errorMsg = '';
     this.newMovie = this.createInitialMovie();
+    this.onDirectorChange(this.newMovie.directorId);
+  }
+
+  protected onDirectorChange(directorId: number): void {
+    const selectedDirector = this.directors.find(
+      (director) => director.id === Number(directorId)
+    );
+
+    if (!selectedDirector) {
+      return;
+    }
+
+    this.newMovie.directorId = selectedDirector.id;
+    this.newMovie.director = selectedDirector.name;
   }
 
   private createInitialMovie(): MovieDraft {
     return {
       title: '',
-      director: '',
+      director: 'Christopher Nolan',
+      directorId: 3,
+      genre: '科幻',
       releaseDate: new Date(),
       rating: 7,
       isWatched: false,

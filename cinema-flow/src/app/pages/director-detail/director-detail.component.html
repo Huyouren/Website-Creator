@@ -1,0 +1,94 @@
+<section class="detail-page" *ngIf="viewModel$ | async as vm">
+  <button mat-button (click)="goBack()" class="back-btn">
+    <mat-icon>arrow_back</mat-icon>
+    返回
+  </button>
+
+  <div class="loading-shell" *ngIf="vm.loading; else detailContent">
+    <mat-progress-spinner mode="indeterminate" diameter="52"></mat-progress-spinner>
+    <p>正在加载导演详情...</p>
+  </div>
+
+  <ng-template #detailContent>
+    <ng-container *ngIf="vm.director as director; else notFound">
+      <mat-card class="director-card">
+        <div class="hero">
+          <div>
+            <p class="eyebrow">Director Profile</p>
+            <h1>{{ director.name }}</h1>
+            <div class="meta-strip">
+              <span>{{ director.nationality }}</span>
+              <span>{{ director.birthYear }} 年出生</span>
+            </div>
+          </div>
+
+          <a mat-stroked-button routerLink="/directors">
+            <mat-icon>groups</mat-icon>
+            返回导演库
+          </a>
+        </div>
+
+        <p class="bio">{{ director.bio }}</p>
+      </mat-card>
+
+      <mat-card class="filmography-card">
+        <div class="section-head">
+          <div>
+            <h2>执导作品</h2>
+            <p>点击电影名称可跳回对应的电影详情页。</p>
+          </div>
+          <span class="count">{{ vm.directedMovies.length }} 部</span>
+        </div>
+
+        <div class="movie-list" *ngIf="vm.directedMovies.length; else emptyMovies">
+          <article class="movie-row" *ngFor="let movie of vm.directedMovies">
+            <div class="movie-main">
+              <a [routerLink]="['/movies', movie.id]">{{ movie.title }}</a>
+              <p>{{ movie.releaseDate | date: 'yyyy-MM-dd' }}</p>
+            </div>
+
+            <div class="movie-side">
+              <a class="genre-link" [routerLink]="['/movies/genre', movie.genre]">
+                {{ movie.genre }}
+              </a>
+              <span class="rating">{{ movie.rating | number: '1.1-1' }}</span>
+            </div>
+          </article>
+        </div>
+
+        <ng-template #emptyMovies>
+          <p class="empty-tip">暂时还没有关联到这位导演的电影作品。</p>
+        </ng-template>
+      </mat-card>
+
+      <div class="navigation-buttons">
+        <a
+          mat-stroked-button
+          *ngIf="vm.navigation.prev"
+          [routerLink]="['/directors', vm.navigation.prev.id]"
+        >
+          <mat-icon>chevron_left</mat-icon>
+          {{ vm.navigation.prev.name }}
+        </a>
+        <span class="spacer"></span>
+        <a
+          mat-stroked-button
+          *ngIf="vm.navigation.next"
+          [routerLink]="['/directors', vm.navigation.next.id]"
+        >
+          {{ vm.navigation.next.name }}
+          <mat-icon>chevron_right</mat-icon>
+        </a>
+      </div>
+    </ng-container>
+  </ng-template>
+
+  <ng-template #notFound>
+    <mat-card class="not-found">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <h2>导演未找到</h2>
+      <p>当前地址中的导演编号无效，或者该导演尚未录入导演库。</p>
+      <a mat-raised-button color="primary" routerLink="/directors">返回导演库</a>
+    </mat-card>
+  </ng-template>
+</section>

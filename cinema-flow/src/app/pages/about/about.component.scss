@@ -56,7 +56,7 @@
 
 .content-grid {
   display: grid;
-  grid-template-columns: 1.05fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -80,7 +80,7 @@ h3 {
 .mini-metrics {
   margin-top: 14px;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
 
   article {
@@ -102,19 +102,17 @@ h3 {
   }
 }
 
-.tech-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-
-  span {
-    padding: 7px 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 214, 140, 0.18);
-    background: rgba(255, 214, 140, 0.08);
-    font-size: 0.84rem;
-    color: #e8d2ab;
-  }
+.route-map {
+  margin: 0;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 214, 140, 0.14);
+  background: rgba(255, 214, 140, 0.05);
+  color: #f4dfba;
+  white-space: pre-wrap;
+  line-height: 1.8;
+  font-family: 'Consolas', 'Fira Code', monospace;
+  font-size: 0.86rem;
 }
 
 .timeline {

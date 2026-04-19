@@ -1,15 +1,15 @@
 <section class="about-shell" *ngIf="viewModel$ | async as vm">
   <header class="about-header">
-    <p class="kicker">Service Hub</p>
+    <p class="kicker">Router & Services Hub</p>
     <h1>关于 CinemaFlow</h1>
     <p class="lead">
-      第四次上机课之后，这个项目已经从“页面驱动”升级为“服务驱动”。页面只负责展示和交互，数据、日志和状态同步都交给根级服务统一处理。
+      第五次上机课之后，这个项目已经从“单实体电影应用”升级为“电影 + 导演”的多实体 SPA。页面层只负责展示，路由、守卫、日志和状态同步都交给根级服务统一处理。
     </p>
     <div class="signal-strip">
-      <span>Angular Service</span>
+      <span>Angular Router</span>
       <span>RxJS Observable</span>
       <span>BehaviorSubject</span>
-      <span>Reactive State</span>
+      <span>Cross-Entity Navigation</span>
     </div>
   </header>
 
@@ -17,14 +17,13 @@
     <mat-card class="about-card intro-card">
       <mat-card-header>
         <mat-icon mat-card-avatar>movie</mat-icon>
-        <mat-card-title>CinemaFlow 服务化架构</mat-card-title>
-        <mat-card-subtitle>v4.0 - Reactive Services Edition</mat-card-subtitle>
+        <mat-card-title>CinemaFlow 路由化架构</mat-card-title>
+        <mat-card-subtitle>v5.0 - Multi-Entity Router Edition</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
         <p>
-          当前应用的所有核心页面都订阅同一份电影状态流。新增、删除、查看详情等动作会通过服务层写入状态中心，再由各页面通过
-          `async` 管道自动刷新。
+          当前应用的所有核心页面都订阅同一份电影状态流，并通过独立的导演服务完成跨实体关联。电影详情可以跳转导演详情，导演详情又能回看对应作品，路由参数与查询参数一起驱动页面刷新。
         </p>
 
         <div class="mini-metrics">
@@ -40,10 +39,23 @@
             <span>最近浏览记录</span>
             <strong>{{ vm.visitedCount }}</strong>
           </article>
+          <article>
+            <span>当前登录状态</span>
+            <strong>{{ vm.isLoggedIn ? '已登录' : '未登录' }}</strong>
+          </article>
         </div>
       </mat-card-content>
     </mat-card>
 
+    <mat-card class="about-card route-card">
+      <mat-card-content>
+        <h3>路由拓扑</h3>
+        <pre class="route-map">{{ vm.routeTopology }}</pre>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="content-grid">
     <mat-card class="about-card stack-card">
       <mat-card-content>
         <h3>已注册的根级服务</h3>
@@ -54,7 +66,11 @@
             <span matListItemLine>{{ service.description }}</span>
           </mat-list-item>
         </mat-list>
+      </mat-card-content>
+    </mat-card>
 
+    <mat-card class="about-card stack-card">
+      <mat-card-content>
         <h3>服务工作状态</h3>
         <div class="service-meta">
           <p *ngIf="vm.latestMessage; else noMessage">最近一条服务消息：{{ vm.latestMessage }}</p>
@@ -62,6 +78,7 @@
             <p>消息面板暂时还没有日志，执行一次新增、删除或详情查看后就会出现。</p>
           </ng-template>
           <p *ngIf="vm.error" class="error-text">当前状态中心错误：{{ vm.error }}</p>
+          <p *ngIf="!vm.error">电影列表、导演列表与导航日志均已接入统一消息面板。</p>
         </div>
       </mat-card-content>
     </mat-card>
@@ -73,19 +90,23 @@
       <div class="timeline">
         <div class="point">
           <span class="dot"></span>
-          <p><strong>服务组合</strong>：`MovieService` 调用时会写入 `MessageService`，所有日志集中展示。</p>
+          <p><strong>多实体路由</strong>：新增 `/directors` 与 `/directors/:id`，电影与导演之间可以双向跳转。</p>
         </div>
         <div class="point">
           <span class="dot"></span>
-          <p><strong>单一事实来源</strong>：`MovieStateService` 用 `BehaviorSubject` 持有全局电影状态。</p>
+          <p><strong>分类筛选</strong>：`/movies/genre/:genre` 与查询参数组合使用，同一组件即可完成搜索与分类浏览。</p>
         </div>
         <div class="point">
           <span class="dot"></span>
-          <p><strong>响应式页面</strong>：列表页、详情页、首页和仪表盘都通过 Observable 获取数据。</p>
+          <p><strong>URL 状态同步</strong>：电影列表额外支持 `sort` 查询参数，按评分 / 年份排序后刷新页面仍能保持。</p>
         </div>
         <div class="point">
           <span class="dot"></span>
-          <p><strong>体验增强</strong>：新增了加载态、错误提示和服务消息面板，方便观察数据流转过程。</p>
+          <p><strong>守卫控制</strong>：`authGuard` 会拦截未登录用户访问“添加电影”页面，并引导回仪表盘登录。</p>
+        </div>
+        <div class="point">
+          <span class="dot"></span>
+          <p><strong>无刷新参数切换</strong>：导演详情使用 `paramMap` 订阅，可在同一组件内切换上一位 / 下一位导演；无效地址会进入独立 404 页面。</p>
         </div>
       </div>
     </mat-card-content>

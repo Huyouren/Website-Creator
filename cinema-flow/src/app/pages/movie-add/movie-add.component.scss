@@ -66,6 +66,12 @@
   gap: 14px;
 }
 
+.helper-text {
+  margin: -4px 0 0;
+  color: #bfa67b;
+  font-size: 0.9rem;
+}
+
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

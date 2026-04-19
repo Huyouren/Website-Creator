@@ -29,11 +29,21 @@
             <h1>{{ movie.title }}</h1>
             <p class="meta">
               <mat-icon>person</mat-icon>
-              导演：{{ movie.director }}
+              导演：
+              <a [routerLink]="['/directors', movie.directorId]" class="inline-link">
+                {{ movie.director }}
+              </a>
             </p>
             <p class="meta">
               <mat-icon>calendar_today</mat-icon>
               上映日期：{{ movie.releaseDate | date: 'yyyy年MM月dd日' }}
+            </p>
+            <p class="meta">
+              <mat-icon>sell</mat-icon>
+              类型：
+              <a [routerLink]="['/movies/genre', movie.genre]" class="inline-link genre-link">
+                {{ movie.genre }}
+              </a>
             </p>
 
             <div class="rating-box">
@@ -42,6 +52,21 @@
               <span class="watch-status" [class.done]="movie.isWatched">
                 {{ movie.isWatched ? '已观影' : '待观影' }}
               </span>
+            </div>
+
+            <div class="fact-grid">
+              <article class="fact-box">
+                <span>路由导航</span>
+                <strong>电影 → 导演</strong>
+              </article>
+              <article class="fact-box">
+                <span>分类浏览</span>
+                <strong>{{ movie.genre }}</strong>
+              </article>
+              <article class="fact-box">
+                <span>上映年份</span>
+                <strong>{{ movie.releaseDate | date: 'yyyy' }}</strong>
+              </article>
             </div>
           </div>
         </div>

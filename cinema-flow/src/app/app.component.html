@@ -1,47 +1,56 @@
 <mat-toolbar class="app-toolbar">
-  <a class="brand" routerLink="/home">
+  <a class="brand" routerLink="/dashboard">
     <mat-icon>local_movies</mat-icon>
     <span>CinemaFlow</span>
   </a>
 
   <span class="spacer"></span>
 
-  <nav class="nav-links">
-    <a
-      mat-button
-      routerLink="/home"
-      routerLinkActive="active-link"
-      [routerLinkActiveOptions]="{ exact: true }"
-    >
-      <mat-icon>home</mat-icon>
-      首页
-    </a>
+  <div class="toolbar-actions">
+    <nav class="nav-links">
+      <a
+        mat-button
+        routerLink="/dashboard"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <mat-icon>dashboard</mat-icon>
+        仪表盘
+      </a>
 
-    <a
-      mat-button
-      routerLink="/dashboard"
-      routerLinkActive="active-link"
-      [routerLinkActiveOptions]="{ exact: true }"
-    >
-      <mat-icon>dashboard</mat-icon>
-      仪表盘
-    </a>
+      <a mat-button routerLink="/movies" routerLinkActive="active-link">
+        <mat-icon>theaters</mat-icon>
+        电影列表
+      </a>
 
-    <a mat-button routerLink="/movies" routerLinkActive="active-link">
-      <mat-icon>theaters</mat-icon>
-      电影列表
-    </a>
+      <a mat-button routerLink="/directors" routerLinkActive="active-link">
+        <mat-icon>person</mat-icon>
+        导演库
+      </a>
 
-    <a mat-button routerLink="/add" routerLinkActive="active-link">
-      <mat-icon>add_circle</mat-icon>
-      添加电影
-    </a>
+      <a mat-button routerLink="/add" routerLinkActive="active-link">
+        <mat-icon>add_circle</mat-icon>
+        添加电影
+      </a>
 
-    <a mat-button routerLink="/about" routerLinkActive="active-link">
-      <mat-icon>info</mat-icon>
-      关于
-    </a>
-  </nav>
+      <a mat-button routerLink="/about" routerLinkActive="active-link">
+        <mat-icon>info</mat-icon>
+        关于
+      </a>
+    </nav>
+
+    <div class="session-actions">
+      <button mat-stroked-button class="session-btn" *ngIf="!(isLoggedIn$ | async)" (click)="showLogin()">
+        <mat-icon>login</mat-icon>
+        登录
+      </button>
+
+      <button mat-stroked-button class="session-btn" *ngIf="isLoggedIn$ | async" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        登出
+      </button>
+    </div>
+  </div>
 </mat-toolbar>
 
 <app-breadcrumb></app-breadcrumb>

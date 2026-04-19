@@ -13,6 +13,8 @@ export interface Movie {
   title: string;
   releaseDate: Date;
   director: string;
+  directorId: number;
+  genre: string;
   rating: number;
   isWatched: boolean;
   posterUrl: string;

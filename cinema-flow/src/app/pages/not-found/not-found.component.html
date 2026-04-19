@@ -1,0 +1,24 @@
+<section class="not-found-shell">
+  <div class="not-found-card">
+    <p class="kicker">404</p>
+    <h1>页面未找到</h1>
+    <p class="lead">
+      当前地址没有匹配的路由。你可以回到仪表盘，或者直接进入电影列表和导演库继续浏览。
+    </p>
+
+    <div class="actions">
+      <a mat-raised-button color="primary" routerLink="/dashboard">
+        <mat-icon>dashboard</mat-icon>
+        返回仪表盘
+      </a>
+      <a mat-stroked-button routerLink="/movies">
+        <mat-icon>theaters</mat-icon>
+        电影列表
+      </a>
+      <a mat-stroked-button routerLink="/directors">
+        <mat-icon>person</mat-icon>
+        导演库
+      </a>
+    </div>
+  </div>
+</section>

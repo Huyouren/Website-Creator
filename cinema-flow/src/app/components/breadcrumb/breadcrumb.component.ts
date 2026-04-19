@@ -22,9 +22,10 @@ export class BreadcrumbComponent {
   protected breadcrumbs: BreadcrumbItem[] = [];
 
   private readonly routeLabels: Record<string, string> = {
-    home: '首页',
     dashboard: '仪表盘',
     movies: '电影列表',
+    genre: '分类',
+    directors: '导演库',
     add: '添加电影',
     about: '关于'
   };
@@ -49,7 +50,8 @@ export class BreadcrumbComponent {
       currentUrl += `/${segment}`;
       const label = /^\d+$/.test(segment)
         ? '详情'
-        : this.routeLabels[segment] ?? decodeURIComponent(segment);
+        : this.routeLabels[segment] ??
+          (segment.toLowerCase() === 'not-found' ? '页面未找到' : decodeURIComponent(segment));
       breadcrumbs.push({ label, url: currentUrl });
     }
 

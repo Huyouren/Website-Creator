@@ -6,7 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { Movie } from '../../models/movie';
+import { MovieDraft } from '../../models/movie';
 import { MovieService } from '../../services/movie.service';
 
 @Component({
@@ -25,31 +25,36 @@ import { MovieService } from '../../services/movie.service';
   styleUrl: './movie-form.component.scss'
 })
 export class MovieFormComponent {
-  newMovie = {
-    title: '',
-    director: '',
-    releaseDate: new Date(),
-    rating: 5,
-    isWatched: false,
-    posterUrl: ''
-  };
+  newMovie: MovieDraft = this.createInitialMovie();
 
   constructor(private movieService: MovieService) {}
 
   onSubmit(): void {
     if (this.newMovie.title && this.newMovie.director) {
-      this.movieService.addMovie(this.newMovie);
-      this.resetForm();
-      alert('电影添加成功！');
+      this.movieService.addMovie(this.newMovie).subscribe({
+        next: () => {
+          this.resetForm();
+          window.alert('电影添加成功！');
+        },
+        error: () => {
+          window.alert('电影添加失败，请稍后重试。');
+        }
+      });
     } else {
-      alert('请填写电影名称和导演');
+      window.alert('请填写电影名称和导演');
     }
   }
 
   resetForm(): void {
-    this.newMovie = {
+    this.newMovie = this.createInitialMovie();
+  }
+
+  private createInitialMovie(): MovieDraft {
+    return {
       title: '',
-      director: '',
+      director: 'Christopher Nolan',
+      directorId: 3,
+      genre: '科幻',
       releaseDate: new Date(),
       rating: 5,
       isWatched: false,

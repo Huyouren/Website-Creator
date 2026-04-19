@@ -2,14 +2,14 @@
   <header class="hero-card">
     <div class="hero-main">
       <p class="kicker">CinemaFlow Dashboard</p>
-      <h1>服务化仪表盘</h1>
+      <h1>路由与实体导航仪表盘</h1>
       <p class="description">
-        仪表盘现在直接订阅响应式状态中心。无论是在列表页删除电影，还是在添加页录入新片，这里的统计卡片和最近数据都会自动更新。
+        这里同时汇总电影实体、导演实体和路由状态。你可以从仪表盘直接进入导演详情、分类筛选和电影详情，体验多实体导航的完整闭环。
       </p>
       <div class="hero-tags">
-        <span>Observable 数据流</span>
-        <span>BehaviorSubject 状态中心</span>
-        <span>跨页面自动同步</span>
+        <span>Parameterized Routes</span>
+        <span>Cross-Entity Navigation</span>
+        <span>Route Guard</span>
       </div>
     </div>
 
@@ -18,18 +18,32 @@
         <mat-icon>theaters</mat-icon>
         查看电影列表
       </a>
+      <a mat-stroked-button routerLink="/directors">
+        <mat-icon>person</mat-icon>
+        浏览导演库
+      </a>
       <a mat-stroked-button routerLink="/add">
         <mat-icon>add_circle</mat-icon>
         添加新电影
       </a>
       <p class="hero-tip">
         <mat-icon>insights</mat-icon>
-        这里的所有统计都来自同一份全局电影状态。
+        这里的所有统计和推荐都来自同一份全局状态与导演服务。
       </p>
     </div>
   </header>
 
   <app-movie-stats></app-movie-stats>
+
+  <mat-card class="status-card warning" *ngIf="loginRequired$ | async">
+    <div class="status-body">
+      <mat-icon>lock</mat-icon>
+      <div>
+        <h2>添加电影前需要登录</h2>
+        <p>请使用导航栏右侧登录按钮，输入账号 `admin` 和密码 `admin` 后再访问“添加电影”。</p>
+      </div>
+    </div>
+  </mat-card>
 
   <mat-card class="status-card" *ngIf="loading$ | async">
     <div class="status-body">
@@ -81,6 +95,30 @@
           <p>当前还没有电影数据，先去添加第一部电影吧。</p>
         </div>
       </ng-template>
+    </section>
+
+    <section class="recent-section" *ngIf="topDirectors$ | async as directors">
+      <div class="section-head">
+        <h2>人气导演</h2>
+        <p>导演详情页支持上一位 / 下一位无刷新切换</p>
+      </div>
+
+      <div class="director-grid">
+        <a
+          class="director-tile"
+          [routerLink]="['/directors', director.id]"
+          *ngFor="let director of directors; trackBy: trackByDirectorId"
+        >
+          <div>
+            <h3>{{ director.name }}</h3>
+            <p>{{ director.nationality }}</p>
+          </div>
+          <div class="tile-meta">
+            <span>{{ director.featuredGenre }}</span>
+            <strong>{{ director.movieCount }} 部作品</strong>
+          </div>
+        </a>
+      </div>
     </section>
 
     <ng-container *ngIf="recentlyVisitedMovies$ | async as visitedMovies">

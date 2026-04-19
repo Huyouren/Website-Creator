@@ -3,12 +3,13 @@
     <p class="kicker">Create New Entry</p>
     <h1>添加新电影</h1>
     <p class="lead">
-      提交表单后会调用状态中心的新增方法，完成后列表页、首页和仪表盘都会立即看到最新结果。
+      本页现在受路由守卫保护。登录后可以为新电影选择已有导演和类型，提交后列表页、导演详情页和仪表盘都会同步刷新。
     </p>
     <div class="header-flags">
       <span>服务调用闭环</span>
+      <span>导演实体关联</span>
+      <span>分类路由支持</span>
       <span>响应式状态同步</span>
-      <span>最终跳转详情页</span>
     </div>
   </header>
 
@@ -23,7 +24,16 @@
 
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>导演</mat-label>
-            <input matInput [(ngModel)]="newMovie.director" name="director" required />
+            <mat-select
+              [(ngModel)]="newMovie.directorId"
+              name="directorId"
+              (ngModelChange)="onDirectorChange($event)"
+              required
+            >
+              <mat-option *ngFor="let director of directors" [value]="director.id">
+                {{ director.name }}
+              </mat-option>
+            </mat-select>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width">
@@ -43,7 +53,20 @@
             <mat-label>海报 URL</mat-label>
             <input matInput [(ngModel)]="newMovie.posterUrl" name="posterUrl" />
           </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>电影类型</mat-label>
+            <mat-select [(ngModel)]="newMovie.genre" name="genre" required>
+              <mat-option *ngFor="let genre of genres" [value]="genre">
+                {{ genre }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
+
+        <p class="helper-text" *ngIf="newMovie.director">
+          当前将关联到导演实体：{{ newMovie.director }}
+        </p>
 
         <div class="slider-field">
           <label for="rating-input">评分：{{ newMovie.rating | number: '1.1-1' }}</label>

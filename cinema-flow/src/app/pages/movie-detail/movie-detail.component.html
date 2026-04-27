@@ -73,16 +73,83 @@
 
         <mat-divider></mat-divider>
 
-        <mat-card-actions align="end">
-          <a mat-raised-button color="primary" routerLink="/movies">
-            <mat-icon>list</mat-icon>
-            返回列表
-          </a>
-          <button mat-raised-button color="warn" [disabled]="deleting" (click)="deleteMovie(movie.id, movie.title)">
-            <mat-icon>{{ deleting ? 'hourglass_top' : 'delete' }}</mat-icon>
-            {{ deleting ? '删除中...' : '删除电影' }}
-          </button>
-        </mat-card-actions>
+        <section class="edit-shell" *ngIf="editing && editDraft; else detailActions">
+          <div class="status-note error" *ngIf="editError">
+            <mat-icon>error_outline</mat-icon>
+            <p>{{ editError }}</p>
+          </div>
+
+          <div class="edit-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>电影名称</mat-label>
+              <input matInput [(ngModel)]="editDraft.title" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>上映日期</mat-label>
+              <input matInput [matDatepicker]="picker" [(ngModel)]="editDraft.releaseDate" />
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>电影类型</mat-label>
+              <input matInput [(ngModel)]="editDraft.genre" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>海报 URL</mat-label>
+              <input matInput [(ngModel)]="editDraft.posterUrl" />
+            </mat-form-field>
+          </div>
+
+          <p class="hint-line">导演实体关联保持为：{{ editDraft.director }}</p>
+
+          <div class="slider-shell">
+            <label for="detail-rating">评分：{{ editDraft.rating | number: '1.1-1' }}</label>
+            <mat-slider min="0" max="10" step="0.1" showTickMarks>
+              <input id="detail-rating" matSliderThumb [(ngModel)]="editDraft.rating" />
+            </mat-slider>
+          </div>
+
+          <mat-slide-toggle [(ngModel)]="editDraft.isWatched">已观影</mat-slide-toggle>
+
+          <div class="edit-actions">
+            <button mat-button type="button" (click)="cancelEdit()">取消编辑</button>
+            <button
+              mat-raised-button
+              color="primary"
+              type="button"
+              [disabled]="savingEdit"
+              (click)="saveEdit(movie.id)"
+            >
+              <mat-icon>{{ savingEdit ? 'hourglass_top' : 'save' }}</mat-icon>
+              {{ savingEdit ? '保存中...' : '保存并返回' }}
+            </button>
+          </div>
+        </section>
+
+        <ng-template #detailActions>
+          <mat-card-actions align="end">
+            <button mat-stroked-button color="primary" type="button" (click)="startEdit(movie)">
+              <mat-icon>edit</mat-icon>
+              编辑并保存
+            </button>
+            <a mat-raised-button color="primary" routerLink="/movies">
+              <mat-icon>list</mat-icon>
+              返回列表
+            </a>
+            <button
+              mat-raised-button
+              color="warn"
+              [disabled]="deleting"
+              (click)="deleteMovie(movie.id, movie.title)"
+            >
+              <mat-icon>{{ deleting ? 'hourglass_top' : 'delete' }}</mat-icon>
+              {{ deleting ? '删除中...' : '删除电影' }}
+            </button>
+          </mat-card-actions>
+        </ng-template>
       </mat-card>
 
       <div class="navigation-buttons">

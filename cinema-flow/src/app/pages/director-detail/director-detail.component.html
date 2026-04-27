@@ -11,6 +11,13 @@
 
   <ng-template #detailContent>
     <ng-container *ngIf="vm.director as director; else notFound">
+      <mat-card class="status-card error" *ngIf="vm.error">
+        <div class="status-body">
+          <mat-icon>error_outline</mat-icon>
+          <p>{{ vm.error }}</p>
+        </div>
+      </mat-card>
+
       <mat-card class="director-card">
         <div class="hero">
           <div>
@@ -87,7 +94,7 @@
     <mat-card class="not-found">
       <mat-icon color="warn">error_outline</mat-icon>
       <h2>导演未找到</h2>
-      <p>当前地址中的导演编号无效，或者该导演尚未录入导演库。</p>
+      <p>{{ vm.error || '当前地址中的导演编号无效，或者该导演尚未录入导演库。' }}</p>
       <a mat-raised-button color="primary" routerLink="/directors">返回导演库</a>
     </mat-card>
   </ng-template>

@@ -1,19 +1,23 @@
-import { HttpClient } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+  HttpParams
+} from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import {
   Observable,
   catchError,
-  delay,
   map,
   of,
-  shareReplay,
+  switchMap,
   tap,
   throwError
 } from 'rxjs';
 import { Comment, Movie, MovieDraft } from '../models/movie';
 import { MessageService } from './message.service';
 
-interface CommentAsset {
+interface CommentApiModel {
   id: number;
   userId: string;
   userName: string;
@@ -23,7 +27,7 @@ interface CommentAsset {
   createdAt: string;
 }
 
-interface MovieAsset {
+interface MovieApiModel {
   id: number;
   title: string;
   releaseDate: string;
@@ -33,7 +37,12 @@ interface MovieAsset {
   rating: number;
   isWatched: boolean;
   posterUrl: string;
-  comments?: CommentAsset[];
+  comments?: CommentApiModel[];
+}
+
+export interface MovieFilters {
+  title?: string;
+  genre?: string;
 }
 
 @Injectable({
@@ -43,93 +52,94 @@ export class MovieService {
   private readonly http = inject(HttpClient);
   private readonly messageService = inject(MessageService);
 
-  private movies: Movie[] = [];
-  private seedLoaded = false;
-  private loadFromAssets$?: Observable<Movie[]>;
+  private readonly apiUrl = 'http://localhost:5000/api/movies';
+  private readonly httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json'
+    })
+  };
 
-  getMovies(): Observable<Movie[]> {
-    return this.ensureMoviesReady().pipe(
-      map((movies) => [...movies].sort((a, b) => a.id - b.id)),
-      delay(180),
-      tap((movies) =>
-        this.messageService.add(`MovieService: loaded ${movies.length} movies`)
+  getMovies(filters: MovieFilters = {}): Observable<Movie[]> {
+    const params = this.buildMovieParams(filters);
+
+    return this.http.get<MovieApiModel[]>(this.apiUrl, { params }).pipe(
+      map((movies) =>
+        movies
+          .map((movie) => this.deserializeMovie(movie))
+          .sort((a, b) => a.id - b.id)
       ),
-      catchError(this.handleError<Movie[]>('failed to load movies'))
+      tap((movies) => {
+        const filterNote = [
+          filters.title ? `title=${filters.title}` : '',
+          filters.genre ? `genre=${filters.genre}` : ''
+        ]
+          .filter(Boolean)
+          .join(', ');
+
+        this.messageService.add(
+          `MovieService: loaded ${movies.length} movies${
+            filterNote ? ` (${filterNote})` : ''
+          }`
+        );
+      }),
+      catchError(this.handleError<Movie[]>('getMovies'))
     );
   }
 
   getMovieById(id: number): Observable<Movie | undefined> {
-    return this.ensureMoviesReady().pipe(
-      map((movies) => this.cloneMaybeMovie(movies.find((movie) => movie.id === id))),
-      delay(140),
+    return this.http.get<MovieApiModel>(`${this.apiUrl}/${id}`).pipe(
+      map((movie) => this.deserializeMovie(movie)),
       tap((movie) =>
-        this.messageService.add(
-          movie
-            ? `MovieService: resolved details for "${movie.title}"`
-            : `MovieService: movie ${id} was not found`
-        )
+        this.messageService.add(`MovieService: resolved details for "${movie.title}"`)
       ),
-      catchError(this.handleError<Movie | undefined>('failed to load movie details'))
+      catchError((error: unknown) => {
+        if (error instanceof HttpErrorResponse && error.status === 404) {
+          this.messageService.add(`MovieService: movie ${id} was not found`);
+          return of(undefined);
+        }
+
+        return this.handleError<Movie | undefined>('getMovieById')(error);
+      })
     );
   }
 
   addMovie(movie: MovieDraft): Observable<Movie> {
-    return this.ensureMoviesReady().pipe(
-      map(() => {
-        const createdMovie = this.createMovie(movie);
-        this.movies = [...this.movies, createdMovie];
-        return this.cloneMovie(createdMovie);
-      }),
-      delay(160),
-      tap((createdMovie) =>
-        this.messageService.add(`MovieService: created "${createdMovie.title}"`)
-      ),
-      catchError(this.handleError<Movie>('failed to create movie'))
-    );
+    const payload = this.serializeMovieDraft(movie);
+
+    return this.http
+      .post<MovieApiModel>(this.apiUrl, payload, this.httpOptions)
+      .pipe(
+        map((createdMovie) => this.deserializeMovie(createdMovie)),
+        tap((createdMovie) =>
+          this.messageService.add(`MovieService: created "${createdMovie.title}"`)
+        ),
+        catchError(this.handleError<Movie>('addMovie'))
+      );
   }
 
   updateMovie(movie: Movie): Observable<Movie> {
-    return this.ensureMoviesReady().pipe(
-      map(() => {
-        const movieIndex = this.movies.findIndex((item) => item.id === movie.id);
+    const payload = this.serializeMovie(movie);
 
-        if (movieIndex === -1) {
-          throw new Error(`movie ${movie.id} was not found`);
-        }
-
-        const updatedMovie = this.normalizeMovie(movie);
-        this.movies = this.movies.map((item) =>
-          item.id === updatedMovie.id ? updatedMovie : item
-        );
-
-        return this.cloneMovie(updatedMovie);
-      }),
-      delay(160),
-      tap((updatedMovie) =>
-        this.messageService.add(`MovieService: updated "${updatedMovie.title}"`)
-      ),
-      catchError(this.handleError<Movie>('failed to update movie'))
-    );
+    return this.http
+      .put<MovieApiModel>(
+        `${this.apiUrl}/${movie.id}`,
+        payload,
+        this.httpOptions
+      )
+      .pipe(
+        map((updatedMovie) => this.deserializeMovie(updatedMovie)),
+        tap((updatedMovie) =>
+          this.messageService.add(`MovieService: updated "${updatedMovie.title}"`)
+        ),
+        catchError(this.handleError<Movie>('updateMovie'))
+      );
   }
 
   deleteMovie(id: number): Observable<boolean> {
-    return this.ensureMoviesReady().pipe(
-      map(() => {
-        const targetMovie = this.movies.find((movie) => movie.id === id);
-
-        if (!targetMovie) {
-          throw new Error(`movie ${id} was not found`);
-        }
-
-        this.movies = this.movies.filter((movie) => movie.id !== id);
-        return targetMovie;
-      }),
-      delay(140),
-      tap((targetMovie) =>
-        this.messageService.add(`MovieService: deleted "${targetMovie.title}"`)
-      ),
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       map(() => true),
-      catchError(this.handleError<boolean>('failed to delete movie'))
+      tap(() => this.messageService.add(`MovieService: deleted movie ${id}`)),
+      catchError(this.handleError<boolean>('deleteMovie'))
     );
   }
 
@@ -137,162 +147,141 @@ export class MovieService {
     movieId: number,
     comment: Omit<Comment, 'id' | 'likes' | 'createdAt'>
   ): Observable<Comment[]> {
-    return this.ensureMoviesReady().pipe(
-      map(() => {
-        const targetMovie = this.movies.find((movie) => movie.id === movieId);
-
-        if (!targetMovie) {
-          throw new Error(`movie ${movieId} was not found`);
+    return this.getMovieById(movieId).pipe(
+      switchMap((movie) => {
+        if (!movie) {
+          return throwError(() => new Error(`movie ${movieId} was not found`));
         }
 
         const nextComments = [
-          ...(targetMovie.comments ?? []),
+          ...(movie.comments ?? []),
           {
             ...comment,
-            id: this.getNextCommentId(targetMovie),
+            id: this.getNextCommentId(movie),
             likes: 0,
             createdAt: new Date()
           }
         ];
 
-        this.movies = this.movies.map((movie) =>
-          movie.id === movieId ? { ...movie, comments: nextComments } : movie
+        return this.updateMovie({ ...movie, comments: nextComments }).pipe(
+          map((updatedMovie) => updatedMovie.comments ?? [])
         );
-
-        return this.cloneComments(nextComments) ?? [];
       }),
-      delay(120),
       tap(() =>
         this.messageService.add(`MovieService: added a comment to movie ${movieId}`)
       ),
-      catchError(this.handleError<Comment[]>('failed to add comment'))
+      catchError(this.handleError<Comment[]>('addComment'))
     );
   }
 
   likeComment(movieId: number, commentId: number): Observable<Comment[]> {
-    return this.ensureMoviesReady().pipe(
-      map(() => {
-        const targetMovie = this.movies.find((movie) => movie.id === movieId);
-
-        if (!targetMovie) {
-          throw new Error(`movie ${movieId} was not found`);
+    return this.getMovieById(movieId).pipe(
+      switchMap((movie) => {
+        if (!movie) {
+          return throwError(() => new Error(`movie ${movieId} was not found`));
         }
 
-        const nextComments = (targetMovie.comments ?? []).map((comment) =>
+        const nextComments = (movie.comments ?? []).map((comment) =>
           comment.id === commentId
             ? { ...comment, likes: comment.likes + 1 }
             : comment
         );
 
-        this.movies = this.movies.map((movie) =>
-          movie.id === movieId ? { ...movie, comments: nextComments } : movie
+        return this.updateMovie({ ...movie, comments: nextComments }).pipe(
+          map((updatedMovie) => updatedMovie.comments ?? [])
         );
-
-        return this.cloneComments(nextComments) ?? [];
       }),
-      delay(100),
       tap(() =>
         this.messageService.add(
           `MovieService: liked comment ${commentId} on movie ${movieId}`
         )
       ),
-      catchError(this.handleError<Comment[]>('failed to like comment'))
+      catchError(this.handleError<Comment[]>('likeComment'))
     );
   }
 
-  private ensureMoviesReady(): Observable<Movie[]> {
-    if (this.seedLoaded) {
-      return of(this.cloneMovies(this.movies));
+  private buildMovieParams(filters: MovieFilters): HttpParams {
+    let params = new HttpParams();
+
+    if (filters.title?.trim()) {
+      params = params.set('title', filters.title.trim());
     }
 
-    if (!this.loadFromAssets$) {
-      this.loadFromAssets$ = this.http.get<MovieAsset[]>('assets/movies.json').pipe(
-        map((movies) => movies.map((movie) => this.deserializeMovie(movie))),
-        tap((movies) => {
-          this.movies = movies;
-          this.seedLoaded = true;
-          this.messageService.add(
-            `MovieService: seeded ${movies.length} movies from assets`
-          );
-        }),
-        map((movies) => this.cloneMovies(movies)),
-        shareReplay(1)
-      );
+    if (filters.genre?.trim()) {
+      params = params.set('genre', filters.genre.trim());
     }
 
-    return this.loadFromAssets$;
-  }
-
-  private getNextId(): number {
-    return Math.max(...this.movies.map((movie) => movie.id), 0) + 1;
+    return params;
   }
 
   private getNextCommentId(movie: Movie): number {
     return Math.max(...(movie.comments ?? []).map((comment) => comment.id), 0) + 1;
   }
 
-  private createMovie(movie: MovieDraft): Movie {
-    return this.normalizeMovie({
-      ...movie,
-      id: this.getNextId()
-    });
-  }
-
-  private deserializeMovie(movie: MovieAsset): Movie {
-    return this.normalizeMovie({
+  private deserializeMovie(movie: MovieApiModel): Movie {
+    return {
       ...movie,
       releaseDate: new Date(movie.releaseDate),
-      comments: movie.comments?.map((comment) => ({
-        ...comment,
-        createdAt: new Date(comment.createdAt)
-      }))
-    });
+      comments: movie.comments?.map((comment) => this.deserializeComment(comment))
+    };
   }
 
-  private normalizeMovie(movie: Movie): Movie {
+  private deserializeComment(comment: CommentApiModel): Comment {
+    return {
+      ...comment,
+      createdAt: new Date(comment.createdAt)
+    };
+  }
+
+  private serializeMovieDraft(movie: MovieDraft): Omit<MovieApiModel, 'id'> {
     return {
       ...movie,
       title: movie.title.trim(),
       director: movie.director.trim(),
-      directorId: Number(movie.directorId) || 0,
       genre: movie.genre.trim() || '未分类',
       posterUrl: movie.posterUrl.trim(),
-      releaseDate: new Date(movie.releaseDate),
-      comments: this.cloneComments(movie.comments)
+      releaseDate: movie.releaseDate.toISOString(),
+      comments: movie.comments?.map((comment) => this.serializeComment(comment))
     };
   }
 
-  private cloneMovie(movie: Movie): Movie {
+  private serializeMovie(movie: Movie): MovieApiModel {
     return {
-      ...movie,
-      releaseDate: new Date(movie.releaseDate),
-      comments: this.cloneComments(movie.comments)
+      ...this.serializeMovieDraft(movie),
+      id: movie.id
     };
   }
 
-  private cloneMaybeMovie(movie: Movie | undefined): Movie | undefined {
-    return movie ? this.cloneMovie(movie) : undefined;
-  }
-
-  private cloneMovies(movies: readonly Movie[]): Movie[] {
-    return movies.map((movie) => this.cloneMovie(movie));
-  }
-
-  private cloneComments(comments: readonly Comment[] | undefined): Comment[] | undefined {
-    return comments?.map((comment) => ({
+  private serializeComment(comment: Comment): CommentApiModel {
+    return {
       ...comment,
-      createdAt: new Date(comment.createdAt)
-    }));
+      createdAt: comment.createdAt.toISOString()
+    };
   }
 
   private handleError<T>(operation: string) {
     return (error: unknown): Observable<T> => {
-      const message =
-        error instanceof Error ? error.message : 'an unknown error occurred';
-      this.messageService.add(`MovieService: ${operation}. ${message}`);
+      const message = this.formatError(operation, error);
+      this.messageService.add(`MovieService: ${message}`);
       return throwError(() =>
         error instanceof Error ? error : new Error(message)
       );
     };
+  }
+
+  private formatError(operation: string, error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      const backendMessage =
+        typeof error.error?.message === 'string'
+          ? error.error.message
+          : error.message;
+
+      return `${operation} failed. ${backendMessage}`;
+    }
+
+    const detail =
+      error instanceof Error ? error.message : 'an unknown error occurred';
+
+    return `${operation} failed. ${detail}`;
   }
 }

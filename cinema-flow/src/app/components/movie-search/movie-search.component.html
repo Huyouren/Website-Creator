@@ -1,52 +1,68 @@
-<div class="search-container">
-  <div class="search-bar">
-    <mat-form-field appearance="outline" class="search-input">
-      <mat-label>搜索电影、导演、演员</mat-label>
-      <input matInput [(ngModel)]="searchKeyword" (keyup.enter)="onSearch()" placeholder="输入关键词搜索...">
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
-    <button mat-raised-button color="primary" (click)="onSearch()">搜索</button>
-  </div>
+<section class="search-container">
+  <div class="search-header">
+    <div>
+      <p class="kicker">HTTP Search</p>
+      <h2>仪表盘标题搜索</h2>
+      <p class="description">
+        输入电影标题后，组件会在 300ms 防抖后调用 Flask API 的 `?title=` 查询。
+      </p>
+    </div>
 
-  <div class="filters">
-    <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>按标签筛选</mat-label>
-      <mat-select [(ngModel)]="selectedTag" (selectionChange)="onFilterByTag()">
-        <mat-option value="">全部</mat-option>
-        <mat-option *ngFor="let tag of allTags" [value]="tag">{{ tag }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>观看状态</mat-label>
-      <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onFilterByStatus()">
-        <mat-option value="">全部</mat-option>
-        <mat-option value="want">想看</mat-option>
-        <mat-option value="watching">在看</mat-option>
-        <mat-option value="watched">看过</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>排序方式</mat-label>
-      <mat-select [(ngModel)]="sortBy" (selectionChange)="onSort()">
-        <mat-option value="rating">评分</mat-option>
-        <mat-option value="date">上映时间</mat-option>
-        <mat-option value="views">热度</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>排序顺序</mat-label>
-      <mat-select [(ngModel)]="sortOrder" (selectionChange)="onSort()">
-        <mat-option value="desc">降序</mat-option>
-        <mat-option value="asc">升序</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <button mat-stroked-button (click)="clearFilters()">
+    <button mat-stroked-button type="button" (click)="clearSearch()" [disabled]="!searchKeyword">
       <mat-icon>clear</mat-icon>
-      清除筛选
+      清空
     </button>
   </div>
-</div>
+
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>搜索电影标题</mat-label>
+    <input
+      matInput
+      [ngModel]="searchKeyword"
+      (ngModelChange)="onSearchInput($event)"
+      placeholder="例如：Interstellar"
+    />
+    <mat-icon matSuffix>travel_explore</mat-icon>
+  </mat-form-field>
+
+  <div class="search-state info" *ngIf="!hasSearched && !loading && !error">
+    <mat-icon>tips_and_updates</mat-icon>
+    <p>输入后会自动搜索，不需要额外点击按钮。</p>
+  </div>
+
+  <div class="search-state loading" *ngIf="loading">
+    <mat-progress-spinner diameter="28" mode="indeterminate"></mat-progress-spinner>
+    <p>正在通过后端接口搜索《{{ lastQuery }}》...</p>
+  </div>
+
+  <div class="search-state error" *ngIf="error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+  </div>
+
+  <ng-container *ngIf="results$ | async as results">
+    <div class="result-summary" *ngIf="hasSearched && !loading && !error">
+      <span>关键词：{{ lastQuery }}</span>
+      <strong>匹配 {{ results.length }} 部电影</strong>
+    </div>
+
+    <div class="result-grid" *ngIf="results.length; else emptyResult">
+      <a class="result-card" *ngFor="let movie of results" [routerLink]="['/movies', movie.id]">
+        <div class="result-meta">
+          <span>{{ movie.genre }}</span>
+          <strong>{{ movie.rating | number: '1.1-1' }}</strong>
+        </div>
+        <h3>{{ movie.title }}</h3>
+        <p>{{ movie.director }}</p>
+        <small>{{ movie.releaseDate | date: 'yyyy-MM-dd' }}</small>
+      </a>
+    </div>
+
+    <ng-template #emptyResult>
+      <div class="search-state empty" *ngIf="hasSearched && !loading && !error">
+        <mat-icon>search_off</mat-icon>
+        <p>没有找到标题包含“{{ lastQuery }}”的电影。</p>
+      </div>
+    </ng-template>
+  </ng-container>
+</section>

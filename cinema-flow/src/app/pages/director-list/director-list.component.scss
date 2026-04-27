@@ -45,6 +45,27 @@
   line-height: 1.65;
 }
 
+.status-card {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 214, 140, 0.14);
+  background: rgba(16, 29, 48, 0.84);
+}
+
+.status-body {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+
+  p {
+    margin: 0;
+  }
+}
+
+.status-body.error {
+  color: #ffc0c0;
+}
+
 .director-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));

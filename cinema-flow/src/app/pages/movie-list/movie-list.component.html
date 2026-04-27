@@ -83,13 +83,13 @@
 
   <div class="state-banner loading" *ngIf="vm.loading">
     <mat-icon>hourglass_top</mat-icon>
-    <p>正在从状态中心读取电影数据...</p>
+    <p>正在通过 Flask API 拉取电影数据...</p>
   </div>
 
   <div class="table-shell" *ngIf="!vm.loading && vm.filteredMovies.length; else noResult">
     <div class="table-caption">
       <span>电影清单</span>
-      <p>分类、搜索和排序状态都会同步写入 URL，刷新页面后仍能保留当前视图。</p>
+      <p>类型筛选会映射到 `?genre=`，搜索词会映射到 `?title=`，排序仍保留在前端 URL 视图里。</p>
     </div>
 
     <div class="table-wrap">

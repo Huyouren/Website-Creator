@@ -106,7 +106,7 @@ export class MovieDetailPageComponent {
         this.movieStateService.markAsVisited(viewModel.movie.id);
       }
 
-      if (this.editing && viewModel.movie && this.editDraft?.id === viewModel.movie.id) {
+      if (this.editing && viewModel.movie && this.editDraft?.id !== viewModel.movie.id) {
         this.editDraft = this.cloneMovie(viewModel.movie);
       }
     }),
@@ -146,10 +146,9 @@ export class MovieDetailPageComponent {
     }
 
     const normalizedTitle = this.editDraft.title.trim();
-    const normalizedDirector = this.editDraft.director.trim();
 
-    if (!normalizedTitle || !normalizedDirector) {
-      this.editError = '请先填写电影名称和导演。';
+    if (!normalizedTitle) {
+      this.editError = '请先填写电影名称。';
       return;
     }
 
@@ -161,7 +160,6 @@ export class MovieDetailPageComponent {
         ...this.editDraft,
         id: movieId,
         title: normalizedTitle,
-        director: normalizedDirector,
         posterUrl: this.editDraft.posterUrl.trim()
       })
       .pipe(finalize(() => (this.savingEdit = false)))
@@ -169,6 +167,7 @@ export class MovieDetailPageComponent {
         next: (updatedMovie) => {
           this.editDraft = this.cloneMovie(updatedMovie);
           this.editing = false;
+          this.goBack();
         },
         error: () => {
           this.editError = '更新失败，请稍后重试。';

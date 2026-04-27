@@ -14,11 +14,23 @@
     </a>
   </header>
 
-  <section class="director-grid" *ngIf="directors$ | async as directors">
+  <div class="status-card" *ngIf="viewModel$ | async as vm">
+    <div class="status-body" *ngIf="vm.loading">
+      <mat-icon>hourglass_top</mat-icon>
+      <p>正在通过导演 API 加载数据...</p>
+    </div>
+
+    <div class="status-body error" *ngIf="vm.error">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ vm.error }}</p>
+    </div>
+  </div>
+
+  <section class="director-grid" *ngIf="viewModel$ | async as vm">
     <a
       class="director-card"
       [routerLink]="['/directors', director.id]"
-      *ngFor="let director of directors; trackBy: trackByDirectorId"
+      *ngFor="let director of vm.directors; trackBy: trackByDirectorId"
     >
       <div class="card-top">
         <span class="badge">#{{ director.id }}</span>

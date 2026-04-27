@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { combineLatest, map } from 'rxjs';
+import { MovieSearchComponent } from '../../components/movie-search/movie-search.component';
 import { MovieStatsComponent } from '../../components/movie-stats/movie-stats.component';
 import { Director } from '../../models/director';
 import { Movie } from '../../models/movie';
@@ -25,6 +26,7 @@ interface DirectorCard extends Director {
     MatCardModule,
     MatButtonModule,
     MatIconModule,
+    MovieSearchComponent,
     MovieStatsComponent
   ],
   templateUrl: './dashboard.component.html',

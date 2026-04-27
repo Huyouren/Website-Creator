@@ -17,3 +17,7 @@ cinema-flow/cinema-flow/node_modules/
 # Common temp files
 Thumbs.db
 .DS_Store
+
+# Python backend artifacts
+__pycache__/
+*.pyc

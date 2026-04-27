@@ -12,7 +12,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSelectModule } from '@angular/material/select';
 import { Router, RouterLink } from '@angular/router';
-import { finalize, take } from 'rxjs';
+import { catchError, finalize, of, take } from 'rxjs';
 import { Director } from '../../models/director';
 import { MovieDraft } from '../../models/movie';
 import { DirectorService } from '../../services/director.service';
@@ -53,7 +53,16 @@ export class MovieAddPageComponent {
   constructor() {
     this.directorService
       .getDirectors()
-      .pipe(take(1))
+      .pipe(
+        take(1),
+        catchError((error: unknown) => {
+          this.errorMsg =
+            error instanceof Error
+              ? error.message
+              : '导演数据加载失败，请稍后重试。';
+          return of([]);
+        })
+      )
       .subscribe((directors) => {
         this.directors = directors;
         this.onDirectorChange(this.newMovie.directorId);

@@ -109,17 +109,34 @@ export class MovieStateService {
   }
 
   addMovie(movie: MovieDraft): Observable<Movie> {
+    return this.addOptimistic(movie);
+  }
+
+  addOptimistic(movie: MovieDraft): Observable<Movie> {
     this.clearError();
+    const previousMovies = this.moviesSubject.value;
+    const optimisticMovie = this.createOptimisticMovie(movie);
+
+    this.moviesSubject.next(
+      [...previousMovies, optimisticMovie].sort((a, b) => a.id - b.id)
+    );
+    this.messageService.add(
+      `MovieState: queued optimistic movie "${optimisticMovie.title}"`
+    );
 
     return this.movieService.addMovie(movie).pipe(
       tap((createdMovie) => {
-        const nextMovies = [...this.moviesSubject.value, createdMovie].sort(
-          (a, b) => a.id - b.id
+        this.moviesSubject.next(
+          this.moviesSubject.value
+            .map((item) => (item.id === optimisticMovie.id ? createdMovie : item))
+            .sort((a, b) => a.id - b.id)
         );
-        this.moviesSubject.next(nextMovies);
         this.messageService.add(`MovieState: synced new movie "${createdMovie.title}"`);
       }),
-      catchError(this.captureError<Movie>('failed to add movie'))
+      catchError((error: unknown) => {
+        this.moviesSubject.next(previousMovies);
+        return this.captureError<Movie>('failed to add movie')(error);
+      })
     );
   }
 
@@ -142,19 +159,38 @@ export class MovieStateService {
   }
 
   deleteMovie(id: number): Observable<boolean> {
+    return this.deleteOptimistic(id);
+  }
+
+  deleteOptimistic(id: number): Observable<boolean> {
     this.clearError();
+    const previousMovies = this.moviesSubject.value;
+    const previousVisitedIds = this.visitedIdsSubject.value;
+    const targetMovie = previousMovies.find((movie) => movie.id === id);
+
+    if (!targetMovie) {
+      const error = new Error(`movie ${id} was not found in state`);
+      this.setError('failed to delete movie', error);
+      return throwError(() => error);
+    }
+
+    this.moviesSubject.next(previousMovies.filter((movie) => movie.id !== id));
+    this.visitedIdsSubject.next(
+      previousVisitedIds.filter((visitedId) => visitedId !== id)
+    );
+    this.messageService.add(
+      `MovieState: removed movie ${id} from the state store optimistically`
+    );
 
     return this.movieService.deleteMovie(id).pipe(
       tap(() => {
-        this.moviesSubject.next(
-          this.moviesSubject.value.filter((movie) => movie.id !== id)
-        );
-        this.visitedIdsSubject.next(
-          this.visitedIdsSubject.value.filter((visitedId) => visitedId !== id)
-        );
         this.messageService.add(`MovieState: removed movie ${id} from the state store`);
       }),
-      catchError(this.captureError<boolean>('failed to delete movie'))
+      catchError((error: unknown) => {
+        this.moviesSubject.next(previousMovies);
+        this.visitedIdsSubject.next(previousVisitedIds);
+        return this.captureError<boolean>('failed to delete movie')(error);
+      })
     );
   }
 
@@ -184,6 +220,30 @@ export class MovieStateService {
 
   private clearError(): void {
     this.errorSubject.next(null);
+  }
+
+  private createOptimisticMovie(movie: MovieDraft): Movie {
+    const nextTemporaryId = Math.min(
+      0,
+      ...this.moviesSubject.value
+        .filter((item) => item.id < 0)
+        .map((item) => item.id)
+    ) - 1;
+
+    return {
+      ...movie,
+      id: nextTemporaryId,
+      title: movie.title.trim(),
+      director: movie.director.trim(),
+      directorId: Number(movie.directorId) || 0,
+      genre: movie.genre.trim() || '未分类',
+      posterUrl: movie.posterUrl.trim(),
+      releaseDate: new Date(movie.releaseDate),
+      comments: movie.comments?.map((comment) => ({
+        ...comment,
+        createdAt: new Date(comment.createdAt)
+      }))
+    };
   }
 
   private setError(operation: string, error: unknown): void {
